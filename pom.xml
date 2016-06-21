@@ -5,32 +5,53 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <scm>
-        <connection>scm:git:http://gitlab.alibaba-inc.com/data-hub/datahub-sdk-java.git</connection>
-        <developerConnection>scm:git:ssh://git@gitlab.alibaba-inc.com:data-hub/datahub-sdk-java.git
-        </developerConnection>
-    </scm>
-
-    <!-- Adding taobao parent so we can automate deploy -->
     <parent>
-        <groupId>com.taobao</groupId>
-        <artifactId>parent</artifactId>
-        <version>1.0.2</version>
+      <groupId>org.sonatype.oss</groupId>
+      <artifactId>oss-parent</artifactId>
+      <version>7</version>
     </parent>
+
+    <scm>
+        <connection>scm:git:http://github.com/aliyun/aliyun-datahub-java-sdk.git</connection>
+        <developerConnection>scm:git:git@github.com:aliyun/aliyun-datahub-java-sdk.git</developerConnection>
+        <url>http://github.com/aliyun/aliyun-datahub-java-sdk</url>
+    </scm>
 
     <groupId>com.aliyun.datahub</groupId>
     <artifactId>datahub</artifactId>
     <version>2.1.1-SNAPSHOT</version>
     <packaging>pom</packaging>
+    <name>Aliyun Datahub SDK for Java</name>
+    <description>Aliyun Datahub SDK for Java Used for accessing Datahub service</description>
+    <url>http://www.github.com/aliyun/aliyun-datahub-java-sdk</url>
+
+    <distributionManagement>
+        <snapshotRepository>
+            <id>sonatype-nexus-snapshots</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+        </snapshotRepository>
+        <repository>
+            <id>nexus-releases</id>
+            <name>Nexus Release Repository</name>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
+
+    <organization>
+        <name>Alibaba Cloud Computing</name>
+        <url>http://www.aliyun.com</url>
+    </organization>
+
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
 
     <modules>
         <module>datahub-sdk</module>
     </modules>
-
-
-    <name>Aliyun Datahub SDK for Java</name>
-    <description>Aliyun Datahub SDK for Java Used for accessing Datahub service</description>
-    <url>http://www.aliyun.com/product/dhs</url>
 
     <dependencies>
         <dependency>
