@@ -21,7 +21,7 @@
     <artifactId>datahub</artifactId>
     <version>2.1.1-SNAPSHOT</version>
     <packaging>pom</packaging>
-    <name>Aliyun Datahub SDK for Java</name>
+    <name>datahub-sdk-java</name>
     <description>Aliyun Datahub SDK for Java Used for accessing Datahub service</description>
     <url>http://www.github.com/aliyun/aliyun-datahub-java-sdk</url>
 
