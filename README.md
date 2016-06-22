@@ -83,4 +83,5 @@
     GetRecordsResult r = client.getRecords("projectName", "topicName", "shardId", cursor.getCursor(), 10);
 
 ### License
-    licensed under the [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0.html)
+
+licensed under the [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0.html)
