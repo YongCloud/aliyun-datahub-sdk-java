@@ -52,18 +52,18 @@ public class BlobTopicTest {
 
     @BeforeMethod
     public void setUp() {
-        topicName = "blob_test"; //DatahubTestUtils.getRandomTopicName();
+        topicName = DatahubTestUtils.getRandomTopicName();
         shardCount = 3;
         int lifeCycle = 3;
         RecordType type = RecordType.BLOB;
         String comment = "";
-        topic = project.getTopic(topicName);//topic = project.createTopic(topicName, shardCount, lifeCycle, type, null, comment);
-        //topic.waitForShardReady();
+        topic = project.createTopic(topicName, shardCount, lifeCycle, type, null, comment);
+        topic.waitForShardReady();
     }
 
     @AfterMethod (alwaysRun = true)
     public void tearDown() {
-        //project.deleteTopic(topicName);
+        project.deleteTopic(topicName);
     }
 
     private BlobRecordEntry genData() {

@@ -48,24 +48,24 @@ public class TopicTest {
         RecordSchema schema = new RecordSchema();
         schema.addField(new Field("test", FieldType.BIGINT));
         String comment = "";
-        topicName = "blob_test"; //DatahubTestUtils.getRandomTopicName();
+        topicName = DatahubTestUtils.getRandomTopicName();
         try {
             client.createTopic(projectName, topicName, shardCount, lifeCycle, type, schema, comment);
             Assert.assertTrue(true);
         } catch(DatahubClientException e) {
             Assert.assertTrue(false);
         } finally {
-            //client.deleteTopic(projectName, topicName);
+            client.deleteTopic(projectName, topicName);
         }
     }
 
     @Test
     public void testCreateBlobTopicNormal() throws Exception{
         int shardCount = 3;
-        int lifeCycle = 1;
+        int lifeCycle = 7;
         RecordType type = RecordType.BLOB;
         String comment = "";
-        topicName = "blob_test"; //DatahubTestUtils.getRandomTopicName();
+        topicName = DatahubTestUtils.getRandomTopicName();
         client.createTopic(projectName, topicName, shardCount, lifeCycle, type, comment);
     }
 
