@@ -67,6 +67,7 @@ public class TopicTest {
         String comment = "";
         topicName = DatahubTestUtils.getRandomTopicName();
         client.createTopic(projectName, topicName, shardCount, lifeCycle, type, comment);
+        client.deleteTopic(projectName, topicName);
     }
 
     @Test
@@ -79,6 +80,7 @@ public class TopicTest {
         client.createTopic(projectName, topicName, shardCount, lifeCycle, type, comment);
         GetTopicResult getTopicResult = client.getTopic(projectName, topicName);
         Assert.assertEquals(getTopicResult.getRecordType(), RecordType.BLOB);
+        client.deleteTopic(projectName, topicName);
     }
 
     @Test(expectedExceptions = InvalidParameterException.class)

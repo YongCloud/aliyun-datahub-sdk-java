@@ -184,15 +184,7 @@ public class PutRecordsTest {
 
     @Test
     public void testNoneAsciiValue() {
-        topicName = DatahubTestUtils.getRandomTopicName();
-        int shardCount = 1;
-        int lifeCycle = 3;
-        RecordType type = RecordType.TUPLE;
-        RecordSchema schema = new RecordSchema();
-        schema.addField(new Field("test", FieldType.STRING));
-        String comment = "";
-        Topic topic = project.createTopic(topicName, shardCount, lifeCycle, type, schema, comment);
-
+        RecordSchema schema = topic.getRecordSchema();
         try {
             Thread.sleep(3000);
         } catch (InterruptedException e) {
@@ -238,14 +230,7 @@ public class PutRecordsTest {
 
     @Test
     public void testPutRecordWithRetry() {
-        topicName = DatahubTestUtils.getRandomTopicName();
-        int shardCount = 3;
-        int lifeCycle = 3;
-        RecordType type = RecordType.TUPLE;
-        RecordSchema schema = DatahubTestUtils.createSchema("string a, bigint b, double c, timestamp d, boolean e");
-        String comment = "";
-        Topic topic = project.createTopic(topicName, shardCount, lifeCycle, type, schema, comment);
-        topic.waitForShardReady();
+        RecordSchema schema = topic.getRecordSchema();
 
         RecordEntry entry = new RecordEntry(schema);
         entry.setShardId("0");
@@ -574,15 +559,7 @@ public class PutRecordsTest {
 
     @Test
     public void testWriteBatchRecordsWithMultiShard() {
-        topicName = DatahubTestUtils.getRandomTopicName();
-        int shardCount = 3;
-        int lifeCycle = 3;
-        RecordType type = RecordType.TUPLE;
-        RecordSchema schema = DatahubTestUtils.createSchema("string a, bigint b, double c");
-        String comment = "";
-        Topic topic = project.createTopic(topicName, shardCount, lifeCycle, type, schema, comment);
-        topic.waitForShardReady();
-
+        RecordSchema schema = topic.getRecordSchema();
         List<ShardEntry> shards = topic.listShard();
 
         List<RecordEntry> entries = new ArrayList<RecordEntry>();
@@ -629,7 +606,7 @@ public class PutRecordsTest {
 
     @Test (groups = {"notnull"})
     public void testNotnullConstraint() {
-        topicName = DatahubTestUtils.getRandomTopicName();
+        String topicName = DatahubTestUtils.getRandomTopicName();
         shardCount = 3;
         int lifeCycle = 3;
         RecordType type = RecordType.TUPLE;
@@ -661,5 +638,6 @@ public class PutRecordsTest {
         PutRecordsResult result = topic.putRecords(recordEntries);
         Assert.assertEquals(result.getFailedRecordCount(), 5);
         Assert.assertEquals(result.getFailedRecordIndex(), expectFailedIndex);
+        project.deleteTopic(topicName);
     }
 }
