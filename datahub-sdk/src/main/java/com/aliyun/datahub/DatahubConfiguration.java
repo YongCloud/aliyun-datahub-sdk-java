@@ -21,7 +21,6 @@ package com.aliyun.datahub;
 
 import com.aliyun.datahub.auth.Account;
 import com.aliyun.datahub.common.transport.DefaultTransport;
-import com.aliyun.datahub.model.compress.Compression;
 import com.aliyun.datahub.model.compress.CompressionFormat;
 import com.aliyun.datahub.rest.RestClient;
 

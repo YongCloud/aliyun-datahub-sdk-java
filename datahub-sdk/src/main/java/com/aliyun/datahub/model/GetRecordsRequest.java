@@ -2,10 +2,6 @@ package com.aliyun.datahub.model;
 
 
 import com.aliyun.datahub.common.data.RecordSchema;
-import com.aliyun.datahub.common.transport.HttpMethod;
-import com.aliyun.datahub.exception.InvalidParameterException;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.node.ObjectNode;
 
 /**
  * 
@@ -47,7 +43,6 @@ public class GetRecordsRequest {
         this.shardId = shardId;
         this.cursor = cursor;
         this.limit = limit;
-        this.schema = schema;
     }
 
     public void setSchema(RecordSchema schema) {

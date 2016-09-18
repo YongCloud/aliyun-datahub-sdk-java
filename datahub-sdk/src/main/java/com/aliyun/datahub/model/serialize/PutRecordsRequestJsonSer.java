@@ -1,5 +1,6 @@
 package com.aliyun.datahub.model.serialize;
 
+import com.aliyun.datahub.DatahubClient;
 import com.aliyun.datahub.common.transport.DefaultRequest;
 import com.aliyun.datahub.common.transport.HttpMethod;
 import com.aliyun.datahub.common.util.JacksonParser;
@@ -9,6 +10,8 @@ import com.aliyun.datahub.model.RecordEntry;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.ObjectNode;
+
+import java.io.IOException;
 import java.util.List;
 
 public class PutRecordsRequestJsonSer implements Serializer<DefaultRequest, PutRecordsRequest> {
@@ -26,7 +29,12 @@ public class PutRecordsRequestJsonSer implements Serializer<DefaultRequest, PutR
         for (RecordEntry record : list) {
             records.add(record.toJsonNode());
         }
-        req.setBody(node.toString());
+
+        try {
+            req.setBody(mapper.writeValueAsString(node));
+        } catch (IOException e) {
+            throw new DatahubClientException("serialize error", e);
+        }
 
         return req;
     }

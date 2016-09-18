@@ -8,6 +8,8 @@ import com.aliyun.datahub.model.GetRecordsRequest;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ObjectNode;
 
+import java.io.IOException;
+
 public class GetRecordsRequestJsonSer implements Serializer<DefaultRequest, GetRecordsRequest> {
 
     @Override
@@ -26,7 +28,11 @@ public class GetRecordsRequestJsonSer implements Serializer<DefaultRequest, GetR
             throw new InvalidParameterException("record size must be positive");
         }
         body.put("Limit", request.getLimit());
-        req.setBody(body.toString());
+        try {
+            req.setBody(mapper.writeValueAsString(body));
+        } catch (IOException e) {
+            throw new DatahubClientException("serialize error", e);
+        }
         return req;
     }
 

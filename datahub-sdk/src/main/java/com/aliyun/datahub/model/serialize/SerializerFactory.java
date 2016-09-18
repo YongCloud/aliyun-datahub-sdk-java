@@ -67,4 +67,40 @@ public interface SerializerFactory {
     public Serializer<DefaultRequest, MergeShardRequest> getMergeShardRequestSer() throws DatahubClientException;
 
     public Deserializer<MergeShardResult, MergeShardRequest, Response> getMergeShardResultDeser() throws DatahubClientException;
+
+    public Serializer<DefaultRequest, ListConnectorRequest> getListConnectorRequestSer() throws DatahubClientException;
+
+    public Deserializer<ListConnectorResult, ListConnectorRequest, Response> getListConnectorResultDeser() throws DatahubClientException;
+
+    public Serializer<DefaultRequest, CreateConnectorRequest> getCreateConnectorRequestSer() throws DatahubClientException;
+
+    public Deserializer<CreateConnectorResult, CreateConnectorRequest, Response> getCreateConnectorResultDeser() throws DatahubClientException;
+
+    public Serializer<DefaultRequest, GetConnectorRequest> getGetConnectorRequestSer() throws DatahubClientException;
+
+    public Deserializer<GetConnectorResult, GetConnectorRequest, Response> getGetConnectorResultDeser() throws DatahubClientException;
+
+    public Serializer<DefaultRequest, DeleteConnectorRequest> getDeleteConnectorRequestSer() throws DatahubClientException;
+
+    public Deserializer<DeleteConnectorResult, DeleteConnectorRequest, Response> getDeleteConnectorResultDeser() throws DatahubClientException;
+
+    public Serializer<DefaultRequest, ReloadConnectorRequest> getReloadConnectorRequestSer() throws DatahubClientException;
+
+    public Deserializer<ReloadConnectorResult, ReloadConnectorRequest, Response> getReloadConnectorResultDeser() throws DatahubClientException;
+
+    public Serializer<DefaultRequest, GetConnectorShardStatusRequest> getGetConnectorShardStatusRequestSer() throws DatahubClientException;
+
+    public Deserializer<GetConnectorShardStatusResult, GetConnectorShardStatusRequest, Response> getGetConnectorShardStatusResultDeser() throws DatahubClientException;
+
+    public Serializer<DefaultRequest, GetBlobRecordsRequest> getGetBlobRecordsRequestSer() throws DatahubClientException;
+
+    public Deserializer<GetBlobRecordsResult, GetBlobRecordsRequest, Response> getGetBlobRecordsResultDeser() throws DatahubClientException;
+
+    public Serializer<DefaultRequest, PutBlobRecordsRequest> getPutBlobRecordsRequestSer() throws DatahubClientException;
+
+    public Deserializer<PutBlobRecordsResult, PutBlobRecordsRequest, Response> getPutBlobRecordsResultDeser() throws DatahubClientException;
+
+    public Serializer<DefaultRequest, ExtendShardRequest> getExtendShardRequestSer() throws DatahubClientException;
+
+    public Deserializer<ExtendShardResult, ExtendShardRequest, Response> getExtendShardResultDeser() throws DatahubClientException;
 }

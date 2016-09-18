@@ -14,7 +14,7 @@ import com.aliyun.datahub.common.util.KeyRangeUtils;
 import java.util.*;
 
 /**
- * Client for accessing Datahub. All service calls made using this client are
+ * Client for accessing DataHub. All service calls made using this client are
  * blocking, and will not return until the service call completes.
  */
 public class DatahubClient {
@@ -34,7 +34,7 @@ public class DatahubClient {
     final private Long MAX_WAITING_MILLISECOND = 120000L;
 
     /**
-     * Construct a new client to invoke service methods on Datahub.
+     * Construct a new client to invoke service methods on DataHub.
      *
      * All service calls made using this new client object are blocking, and
      * will not return until the service call completes.
@@ -48,7 +48,7 @@ public class DatahubClient {
     }
 
     /**
-     * Construct a new client to invoke service methods on Datahub.
+     * Construct a new client to invoke service methods on DataHub.
      *
      * All service calls made using this new client object are blocking, and
      * will not return until the service call completes.
@@ -200,22 +200,13 @@ public class DatahubClient {
 
     /**
      * 
-     * Create a Datahub topic.
+     * Create a DataHub topic.
+     *
+     * Server returns response immediately when received the CreateTopic request.
+     * All shards are in <code>ACTIVE</code> status after topic created.
+     * Write operation can only be performed on <code>ACTIVE</code> shards.
      * 
-     * 
-     * A topic stores data records from different data
-     * sources. Scale-out within a Datahub topic is explicitly supported by
-     * means of shards.
-     * 
-     * 
-     * <code>CreateTopic</code> is an asynchronous operation. When receiving a
-     * <code>CreateTopic</code> request, service immediately returns. After the
-     * shards created, service sets the shards status to <code>ACTIVE</code>.
-     * You should perform write operations only on an <code>ACTIVE</code> shards.
-     * 
-     * 
-     * You can use <code>ListShard</code> to check the shard status, which
-     * is returned in <code>StatusEntry</code>.
+     * You can use <code>ListShard</code> to get the shard status.
      * 
      * @param projectName
      *        The name of the project.
@@ -225,7 +216,13 @@ public class DatahubClient {
      *        The initial shard count of the topic.
      * @param lifeCycle
      *        The data records expired time after which data can not be accessible.
-     *        Unit of time represents in day.
+     *        Number of days.
+     * @param recordType
+     *        The records type of this topic.
+     * @param recordSchema
+     *        The records schema of this topic.
+     * @param desc
+     *        The comment of this topic.
      * @throws ResourceExistException
      *         The resource is not available for this operation.
      * @throws ResourceNotFoundException
@@ -239,23 +236,48 @@ public class DatahubClient {
     }
 
     /**
+     *
+     * Create a DataHub topic.
+     *
+     * Server returns response immediately when received the CreateTopic request.
+     * All shards are in <code>ACTIVE</code> status after topic created.
+     * Write operation can only be performed on <code>ACTIVE</code> shards.
+     *
+     * You can use <code>ListShard</code> to get the shard status.
+     *
+     * @param projectName
+     *        The name of the project.
+     * @param topicName
+     *        The name of the topic.
+     * @param shardCount
+     *        The initial shard count of the topic.
+     * @param lifeCycle
+     *        The data records expired time after which data can not be accessible.
+     *        Number of days.
+     * @param recordType
+     *        The records type of this topic.
+     * @param desc
+     * @throws ResourceExistException
+     *         The resource is not available for this operation.
+     * @throws ResourceNotFoundException
+     *         The project is not created.
+     * @throws InvalidParameterException
+     *         A specified parameter exceeds its restrictions, is not supported,
+     *         or can't be used. For more information, see the returned message.
+     */
+    public void createTopic(String projectName, String topicName, int shardCount, int lifeCycle, RecordType recordType, String desc) {
+        createTopic(new CreateTopicRequest(projectName, topicName, shardCount, lifeCycle, recordType, null, desc));
+    }
+
+    /**
      * 
-     * Create a Datahub topic.
+     * Create a DataHub topic.
      * 
+     * Server returns response immediately when received the CreateTopic request.
+     * All shards are in <code>ACTIVE</code> status after topic created.
+     * Write operation can only be performed on <code>ACTIVE</code> shards.
      * 
-     * A topic stores data records from different data
-     * sources. Scale-out within a Datahub topic is explicitly supported by
-     * means of shards.
-     * 
-     * 
-     * <code>CreateTopic</code> is an asynchronous operation. When receiving a
-     * <code>CreateTopic</code> request, service immediately returns. After the
-     * shards created, service sets the shards status to <code>ACTIVE</code>.
-     * You should perform write operations only on an <code>ACTIVE</code> shards.
-     * 
-     * 
-     * You can use <code>ListShard</code> to check the shard status, which
-     * is returned in <code>StatusEntry</code>.
+     * You can use <code>ListShard</code> to get the shard status.
      * 
      * @param request
      *        Represents the input for <code>CreateTopic</code>.
@@ -736,6 +758,63 @@ public class DatahubClient {
         return getRecords(request);
     }
 
+    /**
+     * Get blob data records from a shard.
+     *
+     * @param projectName
+     *         The name of the project.
+     * @param topicName
+     *         The name of topic.
+     * @param shardId
+     *         The shard ID of shard.
+     * @param cursor
+     *         The value of cursor.
+     * @param limit
+     *         The maximum number of records returned by service.
+     * @return Result of the GetRecords operation returned by the service.
+     * @throws ResourceNotFoundException
+     *         The requested resource could not be found.
+     * @throws InvalidParameterException
+     *         A specified parameter exceeds its restrictions, is not supported,
+     *         or can't be used. For more information, see the returned message.
+     * @throws MalformedRecordException
+     *         The data records received is malformed, or conflicts with the specified schema.
+     */
+    public GetBlobRecordsResult getBlobRecords(String projectName, String topicName, String shardId, String cursor, int limit) {
+        GetBlobRecordsRequest request = new GetBlobRecordsRequest(projectName, topicName, shardId, cursor, limit);
+        return getBlobRecords(request);
+    }
+
+    /**
+     *
+     * Get blob data records from a shard.
+     *
+     *
+     * Specify a shard cursor using the <code>Cursor</code> parameter.
+     * The shard cursor specifies the position in the shard from which you
+     * want to start reading data records sequentially. If there are no records
+     * available in the portion of the shard that the cursor points to,
+     * <a>GetRecords</a> returns an empty list.
+     *
+     * @param request
+     *         Represents the input for <a>GetBlobRecords</a>.
+     * @return Result of the GetBlobRecords operation returned by the service.
+     * @throws ResourceNotFoundException
+     *         The requested resource could not be found.
+     * @throws InvalidParameterException
+     *         A specified parameter exceeds its restrictions, is not supported,
+     *         or can't be used. For more information, see the returned message.
+     * @throws MalformedRecordException
+     *         The data records received is malformed, or conflicts with the specified schema.
+     */
+    public GetBlobRecordsResult getBlobRecords(GetBlobRecordsRequest request) {
+        DefaultRequest req = factory.getGetBlobRecordsRequestSer().serialize(request);
+
+        Response response = this.restClient.requestWithNoRetry(req);
+
+        return factory.getGetBlobRecordsResultDeser().deserialize(request, response);
+    }
+
     public PutRecordsResult putRecords(String projectName, String topicName, List<RecordEntry> entries, int retries) {
         PutRecordsResult result = putRecords(projectName, topicName, entries);
         for (int i = 0; i < retries; ++i) {
@@ -750,10 +829,10 @@ public class DatahubClient {
 
     /**
      * 
-     * Write data records into a Datahub topic.
+     * Write data records into a DataHub topic.
      * 
      * 
-     * The response includes unsuccessfully processed records. Datahub attempts to
+     * The response includes unsuccessfully processed records. DataHub attempts to
      * process all records in each <code>PutRecords</code> request. A single record
      * failure does not stop the processing of subsequent records.
      * 
@@ -781,10 +860,10 @@ public class DatahubClient {
 
     /**
      * 
-     * Write data records into a Datahub topic.
+     * Write data records into a DataHub topic.
      * 
      * 
-     * The response includes unsuccessfully processed records. Datahub attempts to
+     * The response includes unsuccessfully processed records. DataHub attempts to
      * process all records in each <code>PutRecords</code> request. A single record
      * failure does not stop the processing of subsequent records.
      * 
@@ -809,6 +888,83 @@ public class DatahubClient {
 
         PutRecordsResult rs = factory.getPutRecordsResultDeser().deserialize(request, response);
         List<RecordEntry> records = request.getRecords();
+        for (int i : rs.getFailedRecordIndex()) {
+            rs.addFailedRecord(records.get(i));
+        }
+        return rs;
+    }
+
+    public PutBlobRecordsResult putBlobRecords(String projectName, String topicName, List<BlobRecordEntry> entries, int retries) {
+        PutBlobRecordsResult result = putBlobRecords(projectName, topicName, entries);
+        for (int i = 0; i < retries; ++i) {
+            if (result.getFailedRecordCount() == 0) {
+                return result;
+            } else {
+                result = putBlobRecords(projectName, topicName, result.getFailedRecords());
+            }
+        }
+        return result;
+    }
+
+    /**
+     *
+     * Write blob data records into a DataHub topic.
+     *
+     *
+     * The response includes unsuccessfully processed records. DataHub attempts to
+     * process all records in each <code>PutRecords</code> request. A single record
+     * failure does not stop the processing of subsequent records.
+     *
+     *
+     * An unsuccessfully-processed record includes <code>ErrorCode</code> and
+     * <code>ErrorMessage</code> values.
+     *
+     * @param projectName
+     *        The name of the project.
+     * @param topicName
+     *        The name of the topic.
+     * @param entries
+     *        The array of records sent to service.
+     * @return Result of the PutBlobRecords operation returned by the service.
+     * @throws ResourceNotFoundException
+     *         The requested resource could not be found. The topic might not
+     *         be specified correctly.
+     * @throws InvalidParameterException
+     *         A specified parameter exceeds its restrictions, is not supported,
+     *         or can't be used. For more information, see the returned message.
+     */
+    public PutBlobRecordsResult putBlobRecords(String projectName, String topicName, List<BlobRecordEntry> entries) {
+        return putBlobRecords(new PutBlobRecordsRequest(projectName, topicName, entries));
+    }
+
+    /**
+     *
+     * Write blob data records into a DataHub topic.
+     *
+     *
+     * The response includes unsuccessfully processed records. DataHub attempts to
+     * process all records in each <code>PutRecords</code> request. A single record
+     * failure does not stop the processing of subsequent records.
+     *
+     *
+     * An unsuccessfully-processed record includes <code>ErrorCode</code> and
+     * <code>ErrorMessage</code> values.
+     *
+     * @param request
+     *        A <code>PutBlobRecords</code> request.
+     * @return Result of the PutBlobRecords operation returned by the service.
+     * @throws ResourceNotFoundException
+     *         The requested resource could not be found. The topic might not
+     *         be specified correctly.
+     * @throws InvalidParameterException
+     *         A specified parameter exceeds its restrictions, is not supported,
+     *         or can't be used. For more information, see the returned message.
+     */
+    public PutBlobRecordsResult putBlobRecords(PutBlobRecordsRequest request) {
+        DefaultRequest req = factory.getPutBlobRecordsRequestSer().serialize(request);
+        Response response = this.restClient.requestWithNoRetry(req);
+        PutBlobRecordsResult rs = factory.getPutBlobRecordsResultDeser().deserialize(request, response);
+        List<BlobRecordEntry> records = request.getRecords();
         for (int i : rs.getFailedRecordIndex()) {
             rs.addFailedRecord(records.get(i));
         }

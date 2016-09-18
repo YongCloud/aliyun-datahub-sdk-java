@@ -4,6 +4,7 @@ import com.aliyun.datahub.common.data.FieldType;
 import com.aliyun.datahub.common.data.Field;
 import com.aliyun.datahub.common.data.RecordSchema;
 import com.aliyun.datahub.common.util.KeyRangeUtils;
+import com.aliyun.datahub.exception.LimitExceededException;
 import com.aliyun.datahub.model.*;
 import com.aliyun.datahub.common.data.RecordType;
 import com.aliyun.datahub.model.compress.CompressionFormat;
@@ -18,10 +19,7 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.Test;
 
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class PutRecordsTest {
     private String projectName = null;
@@ -79,6 +77,12 @@ public class PutRecordsTest {
         entry.setTimeStamp("d", 123456789000000L);
         entry.setBoolean("e", true);
         entry.putAttribute("partition", "ds=2016");
+        return entry;
+    }
+
+    private BlobRecordEntry genData() {
+        BlobRecordEntry entry = new BlobRecordEntry();
+        entry.setData("string".getBytes());
         return entry;
     }
 
@@ -179,6 +183,60 @@ public class PutRecordsTest {
     }
 
     @Test
+    public void testNoneAsciiValue() {
+        topicName = DatahubTestUtils.getRandomTopicName();
+        int shardCount = 1;
+        int lifeCycle = 3;
+        RecordType type = RecordType.TUPLE;
+        RecordSchema schema = new RecordSchema();
+        schema.addField(new Field("test", FieldType.STRING));
+        String comment = "";
+        Topic topic = project.createTopic(topicName, shardCount, lifeCycle, type, schema, comment);
+
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        RecordEntry entry = new RecordEntry(schema);
+        entry.setString(0, "\u0002");
+        entry.setShardId("0");
+
+        List<RecordEntry> recordEntries = Arrays.asList(entry);
+
+        PutRecordsResult result = topic.putRecords(recordEntries);
+        Assert.assertEquals(result.getFailedRecordCount(), 0);
+
+        String cursor = topic.getCursor("0", GetCursorRequest.CursorType.LATEST);
+
+        GetRecordsResult getRecordsResult = topic.getRecords("0", cursor, 1);
+
+        Assert.assertEquals(getRecordsResult.getRecordCount(), 1);
+        Assert.assertEquals(getRecordsResult.getRecords().get(0).getString(0), "\u0002");
+    }
+
+    @Test
+    public void testPutBlobRecordsInTupleTopic() {
+        List<BlobRecordEntry> recordEntries = new ArrayList<BlobRecordEntry>();
+        long recordNum = 10;
+
+        for (long n = 0; n < recordNum; n++) {
+            BlobRecordEntry entry = genData();
+            String shardId = String.valueOf(n % shardCount);
+            entry.setShardId(shardId);
+            entry.putAttribute("partition", "ds=2016");
+
+            recordEntries.add(entry);
+        }
+        PutBlobRecordsResult result = topic.putBlobRecords(recordEntries);
+        Assert.assertEquals(result.getFailedRecordCount(), recordNum);
+        for (ErrorEntry e :result.getFailedRecordError()) {
+            Assert.assertEquals(e.getErrorcode(), "MalformedRecord");
+        }
+    }
+
+    @Test
     public void testPutRecordWithRetry() {
         topicName = DatahubTestUtils.getRandomTopicName();
         int shardCount = 3;
@@ -240,6 +298,49 @@ public class PutRecordsTest {
         failedRecord.add(recordEntries.get(7));
         Assert.assertEquals(failedIndex.toArray(), result.getFailedRecordIndex().toArray());
         Assert.assertEquals(failedRecord.toArray(), result.getFailedRecords().toArray());
+    }
+
+    @Test
+    public void testInvalidShard2() {
+        RecordSchema schema = topic.getRecordSchema();
+
+        List<RecordEntry> recordEntries = new ArrayList<RecordEntry>();
+
+        int recordNum = 10;
+        List<Integer> failedIndex = new ArrayList<Integer>();
+        List<RecordEntry> failedRecord = new ArrayList<RecordEntry>();
+
+        for (int n = 0; n < recordNum; n++) {
+            RecordEntry entry = genData(schema);
+            String shardId = "-1";
+            entry.setShardId(shardId);
+            recordEntries.add(entry);
+
+            failedIndex.add(n);
+            failedRecord.add(entry);
+        }
+        PutRecordsResult result = topic.putRecords(recordEntries);
+
+        Assert.assertEquals(failedIndex.toArray(), result.getFailedRecordIndex().toArray());
+        Assert.assertEquals(failedRecord.toArray(), result.getFailedRecords().toArray());
+    }
+
+    @Test(enabled = false, expectedExceptions = LimitExceededException.class)
+    public void testBodyExceededLimitValue() {
+        RecordSchema schema = topic.getRecordSchema();
+
+        List<RecordEntry> recordEntries = new ArrayList<RecordEntry>();
+        for (int i = 0; i < 5; i++) {
+            RecordEntry entry = new RecordEntry(schema);
+            entry.setShardId("0");
+            entry.setString("a", DatahubTestUtils.getRandomString(DatahubTestUtils.MAX_STRING_LENGTH - 1));
+            entry.setBigint("b", Long.MAX_VALUE);
+            entry.setDouble("c", Double.MAX_VALUE);
+            entry.setTimeStamp("d", DatahubTestUtils.MAX_TIMESTAMP_VALUE);
+            entry.setBoolean("e", true);
+            recordEntries.add(entry);
+        }
+        topic.putRecords(recordEntries);
     }
 
     @Test

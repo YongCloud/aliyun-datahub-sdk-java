@@ -1,6 +1,5 @@
 package com.aliyun.datahub.model;
 
-import com.aliyun.datahub.common.transport.HttpMethod;
 import com.aliyun.datahub.exception.InvalidParameterException;
 
 public class UpdateTopicRequest {

@@ -148,6 +148,39 @@ public class Topic {
         return client.putRecords(data.getProjectName(), data.getTopicName(), entries, retries);
     }
 
+    /**
+     * get blob records
+     *
+     * @param shardId shard id
+     * @param cursor  cursor
+     * @param size    record size
+     * @return records
+     */
+    public GetBlobRecordsResult getBlobRecords(String shardId, String cursor, int size) {
+        return client.getBlobRecords(data.getProjectName(), data.getTopicName(), shardId, cursor, size);
+    }
+
+    /**
+     * put blob records
+     *
+     * @param entries records
+     * @return put record result
+     */
+    public PutBlobRecordsResult putBlobRecords(List<BlobRecordEntry> entries) {
+        return client.putBlobRecords(data.getProjectName(), data.getTopicName(), entries);
+    }
+
+    /**
+     * put blob records with retry
+     *
+     * @param entries records
+     * @param retries retry count
+     * @return put record result
+     */
+    public PutBlobRecordsResult putBlobRecords(List<BlobRecordEntry> entries, int retries) {
+        return client.putBlobRecords(data.getProjectName(), data.getTopicName(), entries, retries);
+    }
+
     // getters
     public String getProjectName() {
         return data.getProjectName();

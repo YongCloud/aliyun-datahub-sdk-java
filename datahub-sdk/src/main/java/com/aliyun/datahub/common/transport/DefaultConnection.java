@@ -21,6 +21,7 @@ package com.aliyun.datahub.common.transport;
 
 import com.aliyun.datahub.DatahubConfiguration;
 import com.aliyun.datahub.auth.AuthorizationUtil;
+import com.aliyun.datahub.exception.LimitExceededException;
 
 import java.io.IOException;
 import java.io.InputStream;

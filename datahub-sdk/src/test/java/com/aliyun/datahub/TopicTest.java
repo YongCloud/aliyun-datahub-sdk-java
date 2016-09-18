@@ -48,15 +48,58 @@ public class TopicTest {
         RecordSchema schema = new RecordSchema();
         schema.addField(new Field("test", FieldType.BIGINT));
         String comment = "";
-        topicName = DatahubTestUtils.getRandomTopicName();
+        topicName = "blob_test"; //DatahubTestUtils.getRandomTopicName();
         try {
             client.createTopic(projectName, topicName, shardCount, lifeCycle, type, schema, comment);
             Assert.assertTrue(true);
         } catch(DatahubClientException e) {
             Assert.assertTrue(false);
         } finally {
-            client.deleteTopic(projectName, topicName);
+            //client.deleteTopic(projectName, topicName);
         }
+    }
+
+    @Test
+    public void testCreateBlobTopicNormal() throws Exception{
+        int shardCount = 3;
+        int lifeCycle = 1;
+        RecordType type = RecordType.BLOB;
+        String comment = "";
+        topicName = "blob_test"; //DatahubTestUtils.getRandomTopicName();
+        client.createTopic(projectName, topicName, shardCount, lifeCycle, type, comment);
+    }
+
+    @Test
+    public void testGetBlobTopicNormal() throws Exception{
+        int shardCount = 3;
+        int lifeCycle = 7;
+        RecordType type = RecordType.BLOB;
+        String comment = "";
+        topicName = DatahubTestUtils.getRandomTopicName();
+        client.createTopic(projectName, topicName, shardCount, lifeCycle, type, comment);
+        GetTopicResult getTopicResult = client.getTopic(projectName, topicName);
+        Assert.assertEquals(getTopicResult.getRecordType(), RecordType.BLOB);
+    }
+
+    @Test(expectedExceptions = InvalidParameterException.class)
+    public void testCreateBlobTopicWithSchema() throws Exception{
+        int shardCount = 3;
+        int lifeCycle = 7;
+        RecordType type = RecordType.BLOB;
+        RecordSchema schema = new RecordSchema();
+        schema.addField(new Field("test", FieldType.BIGINT));
+        String comment = "";
+        topicName = DatahubTestUtils.getRandomTopicName();
+        client.createTopic(projectName, topicName, shardCount, lifeCycle, type, schema, comment);
+    }
+
+    @Test(expectedExceptions = InvalidParameterException.class)
+    public void testCreateTupleTopicWithNoProject() {
+        final int shardCount = 3;
+        final int lifeCycle = 7;
+        final RecordType type = RecordType.TUPLE;
+        final String comment = "";
+        client.createTopic(null, topicName, shardCount, lifeCycle, type, comment);
     }
 
     @Test(expectedExceptions = InvalidParameterException.class)

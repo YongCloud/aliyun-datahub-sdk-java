@@ -19,10 +19,12 @@
 
 package com.aliyun.datahub.common.data;
 
+import com.aliyun.datahub.exception.DatahubClientException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.ObjectNode;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -159,6 +161,10 @@ public class RecordSchema {
                 }
             }
         }
-        return schema.toString();
+        try {
+            return mapper.writeValueAsString(schema);
+        } catch (IOException e) {
+            throw new DatahubClientException("serialize error", e);
+        }
     }
 }

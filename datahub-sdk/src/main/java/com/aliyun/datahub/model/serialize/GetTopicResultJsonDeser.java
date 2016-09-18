@@ -43,57 +43,60 @@ public class GetTopicResultJsonDeser implements Deserializer<GetTopicResult, Get
         rs.setProjectName(request.getProjectName());
         rs.setTopicName(request.getTopicName());
 
-        // parse schema
-        RecordSchema schema = new RecordSchema();
-        String strSchema = tree.get("RecordSchema").asText();
-        JsonNode root = null;
-        try {
-            root = mapper.readTree(strSchema);
-        } catch (IOException e) {
-            throw new DatahubServiceException(
-                    "JsonParseError", "Parse body failed:" + response.getBody(), response);
-        }
-
-        JsonNode Fields = root.get("fields");
-        if (Fields != null && !Fields.isNull()) {
-            if (!Fields.isArray()) {
+        if (rs.getRecordType() == RecordType.TUPLE) {
+            // parse schema
+            RecordSchema schema = new RecordSchema();
+            String strSchema = tree.get("RecordSchema").asText();
+            JsonNode root = null;
+            try {
+                root = mapper.readTree(strSchema);
+            } catch (IOException e) {
                 throw new DatahubServiceException(
-                        "InvalidTopicSchema", "Invalid topic schema:" + strSchema, response);
+                        "JsonParseError", "Parse body failed:" + response.getBody().toString(), response);
             }
 
-            Iterator<JsonNode> itField = Fields.getElements();
-            while (itField.hasNext()) {
-                JsonNode fieldNode = itField.next();
-                JsonNode typeNode = fieldNode.get("type");
-                JsonNode nameNode = fieldNode.get("name");
-                JsonNode notnullNode = fieldNode.get("notnull");
-                String strType = typeNode.asText().toUpperCase();
-                FieldType type = null;
-                if (strType.equals(FieldType.STRING.toString())) {
-                    type = FieldType.STRING;
-                } else if (strType.equals(FieldType.TIMESTAMP.toString())) {
-                    type = FieldType.TIMESTAMP;
-                } else if (strType.equals(FieldType.DOUBLE.toString())) {
-                    type = FieldType.DOUBLE;
-                } else if (strType.equals(FieldType.BOOLEAN.toString())) {
-                    type = FieldType.BOOLEAN;
-                } else if (strType.equals(FieldType.BIGINT.toString())) {
-                    type = FieldType.BIGINT;
-                } else {
+            JsonNode Fields = root.get("fields");
+            if (Fields != null && !Fields.isNull()) {
+                if (!Fields.isArray()) {
                     throw new DatahubServiceException(
-                            "UnsupportedFieldType", "Unsupported field type: " + strType, response);
+                            "InvalidTopicSchema", "Invalid topic schema:" + strSchema, response);
                 }
 
-                boolean notnull  = false;
-                if (notnullNode != null) {
-                    notnull = notnullNode.asBoolean();
-                }
-                Field field = new Field(nameNode.asText(), type, notnull);
+                Iterator<JsonNode> itField = Fields.getElements();
+                while (itField.hasNext()) {
+                    JsonNode fieldNode = itField.next();
+                    JsonNode typeNode = fieldNode.get("type");
+                    JsonNode nameNode = fieldNode.get("name");
+                    JsonNode notnullNode = fieldNode.get("notnull");
+                    String strType = typeNode.asText().toUpperCase();
+                    FieldType type = null;
+                    if (strType.equals(FieldType.STRING.toString())) {
+                        type = FieldType.STRING;
+                    } else if (strType.equals(FieldType.TIMESTAMP.toString())) {
+                        type = FieldType.TIMESTAMP;
+                    } else if (strType.equals(FieldType.DOUBLE.toString())) {
+                        type = FieldType.DOUBLE;
+                    } else if (strType.equals(FieldType.BOOLEAN.toString())) {
+                        type = FieldType.BOOLEAN;
+                    } else if (strType.equals(FieldType.BIGINT.toString())) {
+                        type = FieldType.BIGINT;
+                    } else {
+                        throw new DatahubServiceException(
+                                "UnsupportedFieldType", "Unsupported field type: " + strType, response);
+                    }
 
-                schema.addField(field);
+                    boolean notnull  = false;
+                    if (notnullNode != null) {
+                        notnull = notnullNode.asBoolean();
+                    }
+                    Field field = new Field(nameNode.asText(), type, notnull);
+
+                    schema.addField(field);
+                }
             }
+            rs.setRecordSchema(schema);
         }
-        rs.setRecordSchema(schema);
+
         return rs;
     }
 

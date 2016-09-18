@@ -161,6 +161,97 @@ public class JsonSerializerFactory implements SerializerFactory {
         return PutRecordsResultJsonDeser.getInstance();
     }
 
+    @Override
+    public Serializer<DefaultRequest, ListConnectorRequest> getListConnectorRequestSer() {
+        return ListConnectorRequestJsonSer.getInstance();
+    }
+
+    @Override
+    public Deserializer<ListConnectorResult, ListConnectorRequest, Response> getListConnectorResultDeser() {
+        return ListConnectorResultJsonDeser.getInstance();
+    }
+
+    @Override
+    public Serializer<DefaultRequest, CreateConnectorRequest> getCreateConnectorRequestSer() {
+        return CreateConnectorRequestJsonSer.getInstance();
+    }
+
+    @Override
+    public Deserializer<CreateConnectorResult, CreateConnectorRequest, Response> getCreateConnectorResultDeser() {
+        return CreateConnectorResultJsonDeser.getInstance();
+    }
+
+    @Override
+    public Serializer<DefaultRequest, GetConnectorRequest> getGetConnectorRequestSer() {
+        return GetConnectorRequestJsonSer.getInstance();
+    }
+
+    @Override
+    public Deserializer<GetConnectorResult, GetConnectorRequest, Response> getGetConnectorResultDeser() {
+        return GetConnectorResultJsonDeser.getInstance();
+    }
+
+    @Override
+    public Serializer<DefaultRequest, DeleteConnectorRequest> getDeleteConnectorRequestSer() {
+        return DeleteConnectorRequestJsonSer.getInstance();
+    }
+
+    @Override
+    public Deserializer<DeleteConnectorResult, DeleteConnectorRequest, Response> getDeleteConnectorResultDeser() {
+        return DeleteConnectorResultJsonDeser.getInstance();
+    }
+
+    @Override
+    public Serializer<DefaultRequest, ReloadConnectorRequest> getReloadConnectorRequestSer() {
+        return ReloadConnectorRequestJsonSer.getInstance();
+    }
+
+    @Override
+    public Deserializer<ReloadConnectorResult, ReloadConnectorRequest, Response> getReloadConnectorResultDeser() {
+        return ReloadConnectorResultJsonDeser.getInstance();
+    }
+    //
+
+    @Override
+    public Serializer<DefaultRequest, GetConnectorShardStatusRequest> getGetConnectorShardStatusRequestSer() {
+        return GetConnectorShardStatusRequestJsonSer.getInstance();
+    }
+
+    @Override
+    public Deserializer<GetConnectorShardStatusResult, GetConnectorShardStatusRequest, Response> getGetConnectorShardStatusResultDeser() {
+        return GetConnectorShardStatusResultJsonDeser.getInstance();
+    }
+
+    @Override
+    public Serializer<DefaultRequest, GetBlobRecordsRequest> getGetBlobRecordsRequestSer() {
+        return GetBlobRecordsRequestJsonSer.getInstance();
+    }
+
+    @Override
+    public Deserializer<GetBlobRecordsResult, GetBlobRecordsRequest, Response> getGetBlobRecordsResultDeser() {
+        return GetBlobRecordsResultJsonDeser.getInstance();
+    }
+
+    @Override
+    public Serializer<DefaultRequest, PutBlobRecordsRequest> getPutBlobRecordsRequestSer() {
+        return PutBlobRecordsRequestJsonSer.getInstance();
+    }
+
+    @Override
+    public Deserializer<PutBlobRecordsResult, PutBlobRecordsRequest, Response> getPutBlobRecordsResultDeser() {
+        return PutBlobRecordsResultJsonDeser.getInstance();
+    }
+
+    @Override
+    public Serializer<DefaultRequest, ExtendShardRequest> getExtendShardRequestSer() {
+        return ExtendShardRequestJsonSer.getInstance();
+    }
+
+    @Override
+    public Deserializer<ExtendShardResult, ExtendShardRequest, Response> getExtendShardResultDeser() {
+        return ExtendShardResultJsonDeser.getInstance();
+    }
+
     private JsonSerializerFactory() {
     }
 

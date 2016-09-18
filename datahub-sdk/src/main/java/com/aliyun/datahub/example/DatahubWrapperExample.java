@@ -17,9 +17,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DatahubWrapperExample {
-    private String accessId = "***";
-    private String accessKey = "***";
-    private String endpoint = "http://dh-cn-hangzhou.aliyuncs.com";
+    private String accessId = "63wd3dpztlmb5ocdkj94pxmm";
+    private String accessKey = "oRd30z7sV4hBX9aYtJgii5qnyhg=";
+    private String endpoint = "http://10.101.214.153:9111";
     private DatahubClient client;
     private Topic topic;
     private String projectName = "project_test_example";

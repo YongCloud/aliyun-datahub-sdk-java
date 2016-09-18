@@ -2,6 +2,7 @@ package com.aliyun.datahub.model.serialize;
 
 import com.aliyun.datahub.common.data.Field;
 import com.aliyun.datahub.common.data.FieldType;
+import com.aliyun.datahub.common.data.RecordType;
 import com.aliyun.datahub.common.transport.Response;
 import com.aliyun.datahub.common.util.JacksonParser;
 import com.aliyun.datahub.exception.DatahubClientException;
@@ -43,7 +44,6 @@ public class GetRecordsResultJsonDeser implements Deserializer<GetRecordsResult,
         while (itRecord.hasNext()) {
             RecordEntry entry = new RecordEntry(request.getSchema());
             JsonNode record = itRecord.next();
-            JsonNode nextCursor = record.get("NextCursor");
             JsonNode time = record.get("SystemTime");
             JsonNode data = record.get("Data");
             JsonNode attrs = record.get("Attributes");

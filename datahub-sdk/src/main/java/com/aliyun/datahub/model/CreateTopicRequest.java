@@ -59,8 +59,12 @@ public class CreateTopicRequest {
             throw new InvalidParameterException("record type is null");
         }
 
-        if (recordSchema == null) {
-            throw new InvalidParameterException("record schema is null");
+        if (recordType == RecordType.TUPLE && recordSchema == null) {
+            throw new InvalidParameterException("record schema is null for TUPLE topic");
+        }
+
+        if (recordType == RecordType.BLOB && recordSchema != null) {
+            throw new InvalidParameterException("record schema must be null for BLOB topic");
         }
 
         if (comment == null) {

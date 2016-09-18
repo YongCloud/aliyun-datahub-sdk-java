@@ -1,36 +1,21 @@
 package com.aliyun.datahub.model;
 
-import com.aliyun.datahub.DatahubConstants;
 import com.aliyun.datahub.common.data.Field;
 import com.aliyun.datahub.common.data.FieldType;
 import com.aliyun.datahub.common.data.RecordSchema;
-import com.aliyun.datahub.common.util.JacksonParser;
-import com.aliyun.datahub.exception.DatahubClientException;
 import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.ObjectNode;
 
 import java.util.HashMap;
-import java.util.Map;
 
-public class RecordEntry {
-    private String partitionKey;
-    private String hashKey;
-    private String shardId;
-    private Map<String, String> attributes = new HashMap<String, String>();
-    private long systemTime;
+public class RecordEntry extends Record {
     private Field[] fields;
     private Object[] values;
     private HashMap<String, Integer> nameMap = new HashMap<String, Integer>();
 
-    private static final String STRING_CHARSET = "UTF-8";
-    // 9999-12-31 23:59:59
-    private static final long DATETIME_MAX_TICKS = 253402271999000000L;
-    // 0001-01-01 00:00:00
-    private static final long DATETIME_MIN_TICKS = -62135798400000000L;
-
     public RecordEntry(RecordSchema schema) {
+        super();
         if (schema == null) {
             throw new IllegalArgumentException("schema must not be null");
         }
@@ -38,8 +23,9 @@ public class RecordEntry {
     }
 
     public RecordEntry(Field[] fields) {
+        super();
         if (fields == null) {
-            throw new IllegalArgumentException("field list must not be null");
+            throw new IllegalArgumentException("fields list must not be null");
         }
         init(fields);
     }
@@ -54,6 +40,7 @@ public class RecordEntry {
         }
     }
 
+    @Override
     public long getRecordSize() {
         long len = 0;
         for (int i = 0; i < values.length; ++i) {
@@ -78,14 +65,6 @@ public class RecordEntry {
         return len;
     }
 
-    public long getSystemTime() {
-        return systemTime;
-    }
-
-    public void setSystemTime(long systemTime) {
-        this.systemTime = systemTime;
-    }
-
     public int getFieldCount() {
         return values.length;
     }
@@ -98,8 +77,8 @@ public class RecordEntry {
         return values[idx];
     }
 
-    private Object get(String columnName) {
-        return values[getFieldIndex(columnName)];
+    private Object get(String fieldName) {
+        return values[getFieldIndex(fieldName)];
     }
 
     public void setBigint(int idx, Long value) {
@@ -109,19 +88,18 @@ public class RecordEntry {
         values[idx] = value;
     }
 
-
     public Long getBigint(int idx) {
         return (Long) get(idx);
     }
 
 
-    public void setBigint(String columnName, Long value) {
-        setBigint(getFieldIndex(columnName), value);
+    public void setBigint(String fieldName, Long value) {
+        setBigint(getFieldIndex(fieldName), value);
     }
 
 
-    public Long getBigint(String columnName) {
-        return (Long) get(columnName);
+    public Long getBigint(String fieldName) {
+        return (Long) get(fieldName);
     }
 
 
@@ -135,13 +113,12 @@ public class RecordEntry {
     }
 
 
-    public void setDouble(String columnName, Double value) {
-        setDouble(getFieldIndex(columnName), value);
+    public void setDouble(String fieldName, Double value) {
+        setDouble(getFieldIndex(fieldName), value);
     }
 
-
-    public Double getDouble(String columnName) {
-        return (Double) get(columnName);
+    public Double getDouble(String fieldName) {
+        return (Double) get(fieldName);
     }
 
     public void setBoolean(int idx, Boolean value) {
@@ -154,35 +131,46 @@ public class RecordEntry {
     }
 
 
-    public void setBoolean(String columnName, Boolean value) {
-        setBoolean(getFieldIndex(columnName), value);
+    public void setBoolean(String fieldName, Boolean value) {
+        setBoolean(getFieldIndex(fieldName), value);
     }
 
-
-    public Boolean getBoolean(String columnName) {
-        return (Boolean) get(columnName);
+    public Boolean getBoolean(String fieldName) {
+        return (Boolean) get(fieldName);
     }
 
-    public void setTimeStamp(int idx, Long value) {
-        if (value != null && (value > Long.MAX_VALUE || value <= Long.MIN_VALUE)) {
+    /**
+     * set timestamp filed value by index, value should be microseconds
+     * @param idx
+     *     field index
+     * @param microseconds
+     *     the value of the field is microseconds
+     */
+    public void setTimeStamp(int idx, Long microseconds) {
+        if (microseconds != null && (microseconds > Long.MAX_VALUE || microseconds <= Long.MIN_VALUE)) {
             throw new IllegalArgumentException("InvalidData: timestamp out of range.");
         }
-        values[idx] = value;
+        values[idx] = microseconds;
     }
-
 
     public Long getTimeStamp(int idx) {
         return (Long) get(idx);
     }
 
 
-    public void setTimeStamp(String columnName, Long value) {
-        setTimeStamp(getFieldIndex(columnName), value);
+    /**
+     * set timestamp filed value by field name, value should be microseconds
+     * @param fieldName
+     *     field name
+     * @param microseconds
+     *     the value of the field is microseconds
+     */
+    public void setTimeStamp(String fieldName, Long microseconds) {
+        setTimeStamp(getFieldIndex(fieldName), microseconds);
     }
 
-
-    public Long getTimeStamp(String columnName) {
-        return (Long) get(columnName);
+    public Long getTimeStamp(String fieldName) {
+        return (Long) get(fieldName);
     }
 
     public void setString(int idx, String value) {
@@ -198,14 +186,12 @@ public class RecordEntry {
         return (String) o;
     }
 
-
-    public void setString(String columnName, String value) {
-        setString(getFieldIndex(columnName), value);
+    public void setString(String fieldName, String value) {
+        setString(getFieldIndex(fieldName), value);
     }
 
-
-    public String getString(String columnName) {
-        return getString(getFieldIndex(columnName));
+    public String getString(String fieldName) {
+        return getString(getFieldIndex(fieldName));
     }
 
     public int getFieldIndex(String name) {
@@ -225,56 +211,9 @@ public class RecordEntry {
         }
     }
 
-    public String getShardId() {
-        return shardId;
-    }
-
-    public void setShardId(String shardId) {
-        this.shardId = shardId;
-    }
-
-    public String getPartitionKey() {
-        return partitionKey;
-    }
-
-    public void setPartitionKey(String partitionKey) {
-        this.partitionKey = partitionKey;
-    }
-
-    public String getHashKey() {
-        return hashKey;
-    }
-
-    public void setHashKey(String hashKey) {
-        this.hashKey = hashKey;
-    }
-
-    public Map<String, String> getAttributes() {
-        return new HashMap<String, String>(attributes);
-    }
-
-    public void putAttribute(String key, String value) {
-        attributes.put(key, value);
-    }
-
+    @Override
     public JsonNode toJsonNode() {
-        ObjectMapper mapper = JacksonParser.getObjectMapper();
-        ObjectNode node = mapper.createObjectNode();
-        if (shardId != null && !shardId.isEmpty()) {
-            node.put(DatahubConstants.ShardId, shardId);
-        } else if (partitionKey != null && !partitionKey.isEmpty()) {
-            node.put(DatahubConstants.PartitionKey, partitionKey);
-        } else if (hashKey != null && !hashKey.isEmpty()) {
-            node.put(DatahubConstants.HashKey, hashKey);
-        } else {
-            throw new DatahubClientException("Parameter shardId/partitionKey/hashKey not set.");
-        }
-
-        ObjectNode attr = node.putObject("Attributes");
-        for (String key : attributes.keySet()) {
-            attr.put(key, attributes.get(key));
-        }
-
+        ObjectNode node = super.toObjectNode();
         ArrayNode record = node.putArray("Data");
         for (int i = 0; i < this.getFieldCount(); i++) {
             if (this.get(i) != null) {
@@ -283,7 +222,6 @@ public class RecordEntry {
                 record.add((JsonNode)null);
             }
         }
-
         return node;
     }
 }

@@ -7,6 +7,8 @@ import com.aliyun.datahub.model.CreateTopicRequest;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ObjectNode;
 
+import java.io.IOException;
+
 public class CreateTopicRequestJsonSer implements Serializer<DefaultRequest, CreateTopicRequest> {
 
     @Override
@@ -24,11 +26,13 @@ public class CreateTopicRequestJsonSer implements Serializer<DefaultRequest, Cre
 
         if (request.getRecordSchema() != null) {
             body.put("RecordSchema", request.getRecordSchema().toJsonString());
-        } else {
-            body.put("RecordSchema", "{}");
         }
         body.put("Comment", request.getComment());
-        req.setBody(body.toString());
+        try {
+            req.setBody(mapper.writeValueAsString(body));
+        } catch (IOException e) {
+            throw new DatahubClientException("serialize error", e);
+        }
         return req;
     }
 

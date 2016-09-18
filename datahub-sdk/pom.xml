@@ -5,7 +5,7 @@
     <parent>
         <groupId>com.aliyun.datahub</groupId>
         <artifactId>datahub</artifactId>
-        <version>2.1.1-public</version>
+        <version>2.3.0-public</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
