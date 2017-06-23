@@ -12,7 +12,7 @@ import org.testng.annotations.*;
 
 import java.util.List;
 import java.util.Random;
-
+@Test
 public class ShardTest {
     private String projectName = null;
     private String topicName = null;

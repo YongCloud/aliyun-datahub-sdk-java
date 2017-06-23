@@ -32,7 +32,7 @@ public class JsonErrorParser implements ErrorParser{
                 } else if (er.equals("InvalidCursor")) {
                     ex = new InvalidCursorException(tree.get("ErrorMessage").asText());
                 } else if (er.equals("NoSuchTopic") || er.equals("NoSuchProject")
-                        || er.equals("NoSuchShard") || er.equals("NoSuchConnector")) {
+                        || er.equals("NoSuchShard") || er.equals("NoSuchConnector") || er.equals("NoSuchMeteringInfo")) {
                     ex = new ResourceNotFoundException(tree.get("ErrorMessage").asText());
                 } else if (er.equals("ProjectAlreadyExist")
                         || er.equals("TopicAlreadyExist")

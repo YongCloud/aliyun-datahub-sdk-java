@@ -10,6 +10,7 @@ import org.testng.annotations.Test;
 
 import java.util.List;
 
+@Test
 public class RecordEntryTest {
 
     @Test
@@ -27,7 +28,7 @@ public class RecordEntryTest {
         Assert.assertEquals(systemTime, entry.getSystemTime());
     }
 
-    public void verifyRecordEntryByFields(List<Field> fileds, RecordEntry entry) {
+    private void verifyRecordEntryByFields(List<Field> fileds, RecordEntry entry) {
         Assert.assertEquals(fileds.size(), entry.getFieldCount());
         Assert.assertEquals(fileds.size(), entry.getFields().length);
         for (int i = 0; i < fileds.size(); ++i) {

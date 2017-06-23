@@ -10,6 +10,7 @@ import org.testng.annotations.Test;
 import java.io.IOException;
 import java.util.Random;
 
+@Test
 public class CompressionTest {
 
     @Test

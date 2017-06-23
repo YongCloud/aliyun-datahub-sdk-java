@@ -40,6 +40,10 @@ public interface DatahubConstants {
     public static String ParentShardIds = "ParentShardIds";
     public static String PartitionKey = "PartitionKey";
     public static String HashKey = "HashKey";
+    public static String FieldName = "FieldName";
+    public static String CurrentSequence = "CurrentSequence";
+    public static String StartSequence = "StartSequence";
+    public static String EndSequence = "EndSequence";
     public static String MAX_SHARD_ID = String.valueOf(0xffffffffL);
 }
 

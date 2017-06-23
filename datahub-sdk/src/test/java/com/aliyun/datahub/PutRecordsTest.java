@@ -20,7 +20,7 @@ import org.testng.annotations.Test;
 
 import java.math.BigInteger;
 import java.util.*;
-
+@Test
 public class PutRecordsTest {
     private String projectName = null;
     private String topicName = null;
@@ -76,6 +76,16 @@ public class PutRecordsTest {
         entry.setDouble("c", 0.0);
         entry.setTimeStamp("d", 123456789000000L);
         entry.setBoolean("e", true);
+        entry.putAttribute("partition", "ds=2016");
+        return entry;
+    }
+
+    private RecordEntry genInvalidData(RecordSchema schema) {
+        RecordEntry entry = new RecordEntry(schema);
+        entry.setString("a", "string");
+        entry.setBigint("b", 5L);
+        entry.setDouble("c", 0.0);
+        entry.setTimeStamp("d", 123456789000000L);
         entry.putAttribute("partition", "ds=2016");
         return entry;
     }
@@ -165,6 +175,32 @@ public class PutRecordsTest {
     }
 
     @Test
+    public void testPutRecordsRecreateTopic() {
+        RecordSchema schema = topic.getRecordSchema();
+        List<RecordEntry> recordEntries = new ArrayList<RecordEntry>();
+        long recordNum = 10;
+
+        for (long n = 0; n < recordNum; n++) {
+            RecordEntry entry = genData(schema);
+            String shardId = String.valueOf(n % shardCount);
+            entry.setShardId(shardId);
+
+            recordEntries.add(entry);
+        }
+        PutRecordsResult result = topic.putRecords(recordEntries);
+        Assert.assertEquals(result.getFailedRecordCount(), 0);
+
+        project.deleteTopic(topicName);
+
+        topic = project.createTopic(topicName, shardCount, lifeCycle, RecordType.TUPLE, schema, "");
+        topic.waitForShardReady();
+        result = topic.putRecords(recordEntries);
+        Assert.assertNotEquals(result.getFailedRecordCount(), recordNum);
+        Assert.assertEquals(result.getFailedRecordError().get(0).getErrorcode(), "InternalServerError");
+        Assert.assertEquals(result.getFailedRecordError().get(0).getMessage(), "Service topic meta cache refreshing, please try again later.");
+    }
+
+    @Test
     public void testPutRecords() {
         RecordSchema schema = topic.getRecordSchema();
         List<RecordEntry> recordEntries = new ArrayList<RecordEntry>();
@@ -180,6 +216,53 @@ public class PutRecordsTest {
         }
         PutRecordsResult result = topic.putRecords(recordEntries);
         Assert.assertEquals(result.getFailedRecordCount(), 0);
+    }
+
+    @Test
+    public void testPutRecordsMoreField() {
+        RecordSchema schema = topic.getRecordSchema();
+        schema.addField(new Field("add_col", FieldType.STRING));
+        List<RecordEntry> recordEntries = new ArrayList<RecordEntry>();
+        long recordNum = 10;
+
+        for (long n = 0; n < recordNum; n++) {
+            RecordEntry entry = genData(schema);
+            String shardId = String.valueOf(n % shardCount);
+            entry.setShardId(shardId);
+            entry.putAttribute("partition", "ds=2016");
+
+            recordEntries.add(entry);
+        }
+        PutRecordsResult result = topic.putRecords(recordEntries);
+        Assert.assertEquals(result.getFailedRecordCount(), 10);
+        for (ErrorEntry e : result.getFailedRecordError()) {
+            Assert.assertEquals(e.getErrorcode(), "MalformedRecord");
+        }
+    }
+
+    @Test
+    public void testPutRecordsMissingField() {
+        RecordSchema schema = new RecordSchema();
+        schema.addField(new Field("a", FieldType.STRING));
+        schema.addField(new Field("b", FieldType.BIGINT));
+        schema.addField(new Field("c", FieldType.DOUBLE));
+        schema.addField(new Field("d", FieldType.TIMESTAMP));
+        List<RecordEntry> recordEntries = new ArrayList<RecordEntry>();
+        long recordNum = 10;
+
+        for (long n = 0; n < recordNum; n++) {
+            RecordEntry entry = genInvalidData(schema);
+            String shardId = String.valueOf(n % shardCount);
+            entry.setShardId(shardId);
+            entry.putAttribute("partition", "ds=2016");
+
+            recordEntries.add(entry);
+        }
+        PutRecordsResult result = topic.putRecords(recordEntries);
+        Assert.assertEquals(result.getFailedRecordCount(), 10);
+        for (ErrorEntry e : result.getFailedRecordError()) {
+            Assert.assertEquals(e.getErrorcode(), "MalformedRecord");
+        }
     }
 
     @Test
@@ -546,7 +629,7 @@ public class PutRecordsTest {
         List<ShardDesc> res = topic.splitShard("0");
         // redirect shard, wait for shard active, bug do not use list shard to do this, because listshard will update cache in frontend
         try {
-            Thread.sleep(2000);
+            Thread.sleep(10000);
         } catch (InterruptedException e) {
 
         }
@@ -593,7 +676,7 @@ public class PutRecordsTest {
         List<ShardDesc> res = topic.splitShard("0");
         // redirect shard, wait for shard active, bug do not use list shard to do this, because listshard will update cache in frontend
         try {
-            Thread.sleep(2000);
+            Thread.sleep(10000);
         } catch (InterruptedException e) {
 
         }

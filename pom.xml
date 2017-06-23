@@ -19,7 +19,7 @@
 
     <groupId>com.aliyun.datahub</groupId>
     <artifactId>datahub</artifactId>
-    <version>2.3.0-public</version>
+    <version>2.6.1-public</version>
     <packaging>pom</packaging>
     <name>datahub-sdk-java</name>
     <description>Aliyun Datahub SDK for Java Used for accessing Datahub service</description>

@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+@Test
 public class BlobTopicTest {
     private String projectName = null;
     private String topicName = null;

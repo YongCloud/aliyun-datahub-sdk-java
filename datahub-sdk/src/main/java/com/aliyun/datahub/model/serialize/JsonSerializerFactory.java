@@ -252,6 +252,57 @@ public class JsonSerializerFactory implements SerializerFactory {
         return ExtendShardResultJsonDeser.getInstance();
     }
 
+    @Override
+    public Serializer<DefaultRequest, AppendFieldRequest> getAppendFieldRequestSer() {
+        return AppendFieldRequestJsonSer.getInstance();
+    }
+
+    @Override
+    public Deserializer<AppendFieldResult, AppendFieldRequest, Response> getAppendFieldResultDeser() {
+        return AppendFieldResultJsonDeser.getInstance();
+    }
+
+    @Override
+    public Serializer<DefaultRequest, AppendConnectorFieldRequest> getAppendConnectorFieldRequestSer() {
+        return AppendConnectorFieldRequestJsonSer.getInstance();
+    }
+
+    @Override
+    public Deserializer<AppendConnectorFieldResult, AppendConnectorFieldRequest, Response> getAppendConnectorFieldResultDeser() {
+        return AppendConnectorFieldResultJsonDeser.getInstance();
+    }
+
+    @Override
+    public Serializer<DefaultRequest, UpdateConnectorStateRequest> getUpdateConnectorStateRequestSer() {
+        return UpdateConnectorStateRequestJsonSer.getInstance();
+    }
+
+    @Override
+    public Deserializer<UpdateConnectorStateResult, UpdateConnectorStateRequest, Response> getUpdateConnectorStateResultDeser() {
+        return UpdateConnectorStateResultJsonDeser.getInstance();
+    }
+
+    @Override
+    public Serializer<DefaultRequest, UpdateConnectorShardContextRequest> getUpdateConnectorShardContextRequestSer() {
+        return UpdateConnectorShardContextRequestJsonSer.getInstance();
+    }
+
+    @Override
+    public Deserializer<UpdateConnectorShardContextResult, UpdateConnectorShardContextRequest, Response> getUpdateConnectorShardContextResultDeser() {
+        return UpdateConnectorShardContextResultJsonDeser.getInstance();
+    }
+
+    @Override
+    public Serializer<DefaultRequest, GetMeteringInfoRequest> getGetMeteringInfoRequestSer() {
+        return GetMeteringInfoRequestJsonSer.getInstance();
+    }
+
+    @Override
+    public Deserializer<GetMeteringInfoResult, GetMeteringInfoRequest, Response> getGetMeteringInfoResultDeser() {
+        return GetMeteringInfoResultJsonDeser.getInstance();
+    }
+
+
     private JsonSerializerFactory() {
     }
 

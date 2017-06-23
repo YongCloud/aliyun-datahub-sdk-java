@@ -7,6 +7,7 @@ import org.testng.annotations.Test;
 import java.util.ArrayList;
 import java.util.List;
 
+@Test
 public class RecordSchemaTest {
 
     @Test

@@ -6,6 +6,12 @@ public class ShardContext {
     private long endSequence;
     private long curSequence;
 
+    public ShardContext() {
+        this.curSequence = -1;
+        this.startSequence = -1;
+        this.endSequence = -1;
+    }
+
     public long getEndSequence() {
         return endSequence;
     }

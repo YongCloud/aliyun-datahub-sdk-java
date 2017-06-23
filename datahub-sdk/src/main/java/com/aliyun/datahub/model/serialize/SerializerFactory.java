@@ -103,4 +103,24 @@ public interface SerializerFactory {
     public Serializer<DefaultRequest, ExtendShardRequest> getExtendShardRequestSer() throws DatahubClientException;
 
     public Deserializer<ExtendShardResult, ExtendShardRequest, Response> getExtendShardResultDeser() throws DatahubClientException;
+
+    public Serializer<DefaultRequest, AppendFieldRequest> getAppendFieldRequestSer() throws DatahubClientException;
+
+    public Deserializer<AppendFieldResult, AppendFieldRequest, Response> getAppendFieldResultDeser() throws DatahubClientException;
+
+    public Serializer<DefaultRequest, AppendConnectorFieldRequest> getAppendConnectorFieldRequestSer() throws DatahubClientException;
+
+    public Deserializer<AppendConnectorFieldResult, AppendConnectorFieldRequest, Response> getAppendConnectorFieldResultDeser() throws DatahubClientException;
+
+    public Serializer<DefaultRequest, UpdateConnectorStateRequest> getUpdateConnectorStateRequestSer() throws DatahubClientException;
+
+    public Deserializer<UpdateConnectorStateResult, UpdateConnectorStateRequest, Response> getUpdateConnectorStateResultDeser() throws DatahubClientException;
+
+    public Serializer<DefaultRequest, UpdateConnectorShardContextRequest> getUpdateConnectorShardContextRequestSer() throws DatahubClientException;
+
+    public Deserializer<UpdateConnectorShardContextResult, UpdateConnectorShardContextRequest, Response> getUpdateConnectorShardContextResultDeser() throws DatahubClientException;
+
+    public Serializer<DefaultRequest, GetMeteringInfoRequest> getGetMeteringInfoRequestSer() throws DatahubClientException;
+
+    public Deserializer<GetMeteringInfoResult, GetMeteringInfoRequest, Response> getGetMeteringInfoResultDeser() throws DatahubClientException;
 }

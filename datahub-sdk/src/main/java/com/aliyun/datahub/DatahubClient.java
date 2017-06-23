@@ -971,6 +971,25 @@ public class DatahubClient {
         return rs;
     }
 
+    /**
+     * Append field.
+     *
+     * @param request
+     *        Represents the input for <code>appendField</code>.
+     * @return Result of the appendField operation returned by the service.
+     * @throws ResourceNotFoundException
+     *         The requested resource could not be found.
+     * @throws InvalidParameterException
+     *         The requested shard number is invalid.
+     */
+    public AppendFieldResult appendField(AppendFieldRequest request) {
+        DefaultRequest req = factory.getAppendFieldRequestSer().serialize(request);
+
+        Response response = this.restClient.requestWithNoRetry(req);
+
+        return factory.getAppendFieldResultDeser().deserialize(request, response);
+    }
+
     private boolean isShardLoadCompleted(String projectName, String topicName) {
         try {
             ListShardResult result = listShard(projectName, topicName);

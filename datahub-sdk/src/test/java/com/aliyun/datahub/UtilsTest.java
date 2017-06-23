@@ -7,7 +7,7 @@ import org.testng.Assert;
 import org.testng.annotations.*;
 
 import java.math.BigInteger;
-
+@Test
 public class UtilsTest {
     @BeforeClass
     public void setUp() {}

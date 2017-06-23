@@ -9,7 +9,7 @@ import org.testng.annotations.*;
 
 import java.util.ArrayList;
 import java.util.List;
-
+@Test
 public class SerDeTest {
 
     @Test(expectedExceptions = DatahubServiceException.class)

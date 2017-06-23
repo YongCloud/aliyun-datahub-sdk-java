@@ -59,7 +59,11 @@ public class GetRecordsResultJsonDeser implements Deserializer<GetRecordsResult,
             int i = 0;
             for (Field field : request.getSchema().getFields()) {
                 if (!itField.hasNext()) {
-                    throw new MalformedRecordException("field count error, please check schema.", response);
+                    // null value when data field size less than schema (maybe old data after append field)
+                    // do not throw MalformedRecordException after 2.4.1
+                    //throw new MalformedRecordException("field count error, please check schema.", response);
+
+                    continue;
                 }
                 JsonNode node = itField.next();
                 try {
@@ -90,7 +94,8 @@ public class GetRecordsResultJsonDeser implements Deserializer<GetRecordsResult,
                 ++i;
             }
             if (itField.hasNext()) {
-                throw new MalformedRecordException("field count error, please check schema.", response);
+                // ignore this exception after 2.4.1
+                //throw new MalformedRecordException("field count error, please check schema.", response);
             }
             // attributes
             if (attrs != null && !attrs.isNull()) {

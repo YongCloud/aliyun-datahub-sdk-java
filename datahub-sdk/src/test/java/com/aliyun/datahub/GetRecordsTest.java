@@ -16,7 +16,7 @@ import org.testng.annotations.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-
+@Test
 public class GetRecordsTest {
     private String projectName = null;
     private String topicName = null;
@@ -32,7 +32,7 @@ public class GetRecordsTest {
         this.compressionFormat = compressionFormat;
     }
 
-    @BeforeClass
+    @BeforeMethod
     public void SetUp() {
         try {
             DatahubConfiguration conf = DatahubTestUtils.getConf();
@@ -47,16 +47,17 @@ public class GetRecordsTest {
             RecordType type = RecordType.TUPLE;
             RecordSchema schema = new RecordSchema();
             schema.addField(new Field("test", FieldType.STRING));
+            schema.addField(new Field("test2", FieldType.STRING));
             String comment = "";
             client.createTopic(projectName, topicName, shardCount, lifeCycle, type, schema, comment);
-            Thread.sleep(3000);
+            client.waitForShardReady(projectName, topicName);
             System.out.println("topic: " + topicName);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    @AfterClass
+    @AfterMethod
     public void TearDown() {
         try {
             client.deleteTopic(projectName, topicName);
@@ -68,7 +69,7 @@ public class GetRecordsTest {
     private void putRecords(String shardId, int recordNum) {
         RecordSchema schema = new RecordSchema();
         schema.addField(new Field("test", FieldType.STRING));
-
+        schema.addField(new Field("test2", FieldType.STRING));
         List<RecordEntry> recordEntries = new ArrayList<RecordEntry>();
 
         for (long n = 0; n < recordNum; n++) {
@@ -84,6 +85,7 @@ public class GetRecordsTest {
             recordEntries.add(entry);
         }
         PutRecordsResult result = client.putRecords(projectName, topicName, recordEntries);
+        Assert.assertEquals(result.getFailedRecordCount(), 0);
     }
 
     /**
@@ -162,23 +164,45 @@ public class GetRecordsTest {
      */
     @Test (expectedExceptions = MalformedRecordException.class)
     public void testInvalidSchemaType() {
+        putRecords("0", 3);
         RecordSchema schema = new RecordSchema();
         schema.addField(new Field("test", FieldType.BOOLEAN));
         GetCursorResult c1 = client.getCursor(projectName,topicName,"0", GetCursorRequest.CursorType.OLDEST);
         GetRecordsResult r1 = client.getRecords(projectName, topicName, "0", c1.getCursor(), 10, schema);
-
     }
 
     /**
      * use shard id 0
      */
-    @Test (expectedExceptions = MalformedRecordException.class)
+    @Test
     public void testInvalidFieldCount() {
+        putRecords("0", 3);
         RecordSchema schema = new RecordSchema();
         schema.addField(new Field("test", FieldType.STRING));
-        schema.addField(new Field("test1", FieldType.STRING));
+        schema.addField(new Field("test2", FieldType.STRING));
+        schema.addField(new Field("test3", FieldType.STRING));
         GetCursorResult c1 = client.getCursor(projectName,topicName,"0", GetCursorRequest.CursorType.OLDEST);
         GetRecordsResult r1 = client.getRecords(projectName, topicName, "0", c1.getCursor(), 10, schema);
+        Assert.assertEquals(r1.getRecordCount(), 3);
+        for (RecordEntry r : r1.getRecords()) {
+            Assert.assertEquals(r.getString("test3"), null);
+        }
+    }
+
+    /**
+     * use shard id 0
+     */
+    @Test
+    public void testInvalidFieldCount2() {
+        putRecords("0", 3);
+        RecordSchema schema = new RecordSchema();
+        schema.addField(new Field("test", FieldType.STRING));
+        GetCursorResult c1 = client.getCursor(projectName,topicName,"0", GetCursorRequest.CursorType.OLDEST);
+        GetRecordsResult r1 = client.getRecords(projectName, topicName, "0", c1.getCursor(), 10, schema);
+        Assert.assertEquals(r1.getRecordCount(), 3);
+        for (RecordEntry r : r1.getRecords()) {
+            Assert.assertNotEquals(r.getString("test"), null);
+        }
     }
 
     /**

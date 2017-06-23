@@ -36,7 +36,7 @@ public class UpdateTopicRequest {
         }
 
         if (comment == null) {
-            throw new InvalidParameterException("comment jis null");
+            throw new InvalidParameterException("comment is null");
         }
 
         this.projectName = projectName;

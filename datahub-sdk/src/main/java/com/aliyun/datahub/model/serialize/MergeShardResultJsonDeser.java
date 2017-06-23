@@ -5,7 +5,7 @@ import com.aliyun.datahub.common.transport.Response;
 import com.aliyun.datahub.common.util.JacksonParser;
 import com.aliyun.datahub.exception.DatahubServiceException;
 import com.aliyun.datahub.model.MergeShardRequest;
-import com.aliyun.datahub.model.MergeShardResult;;
+import com.aliyun.datahub.model.MergeShardResult;
 import com.aliyun.datahub.model.ShardDesc;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;

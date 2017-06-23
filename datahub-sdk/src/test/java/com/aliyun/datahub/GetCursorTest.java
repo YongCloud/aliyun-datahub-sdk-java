@@ -20,7 +20,7 @@ public class GetCursorTest {
     private String topicName = null;
     private DatahubClient client = null;
 
-    @BeforeClass
+    @BeforeMethod
     public void SetUp() {
         try {
             DatahubConfiguration conf = DatahubTestUtils.getConf();
@@ -34,14 +34,14 @@ public class GetCursorTest {
             schema.addField(new Field("test", FieldType.BIGINT));
             String comment = "";
             client.createTopic(projectName, topicName, shardCount, lifeCycle, type, schema, comment);
-            Thread.sleep(3000);
+            client.waitForShardReady(projectName, topicName);
             System.out.println("topic: " + topicName);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    @AfterClass
+    @AfterMethod
     public void TearDown() {
         try {
             client.deleteTopic(projectName, topicName);
@@ -54,9 +54,8 @@ public class GetCursorTest {
         RecordSchema schema = new RecordSchema();
         schema.addField(new Field("test", FieldType.BIGINT));
 
-        List<RecordEntry> recordEntries = new ArrayList<RecordEntry>();
-
         for (long n = 0; n < recordNum; n++) {
+            List<RecordEntry> recordEntries = new ArrayList<RecordEntry>();
             //RecordData
             RecordEntry entry = new RecordEntry(schema);
 
@@ -67,8 +66,14 @@ public class GetCursorTest {
             entry.setShardId(shardId);
 
             recordEntries.add(entry);
+            client.putRecords(projectName, topicName, recordEntries);
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+
+            }
         }
-        PutRecordsResult result = client.putRecords(projectName, topicName, recordEntries);
+
     }
 
     /**
@@ -81,8 +86,12 @@ public class GetCursorTest {
         putRecords("0", 3);
         GetCursorResult c1 = client.getCursor(projectName, topicName, "0", timestamp - 7 * 24 * 3600 * 1000);
         GetCursorResult c2 = client.getCursor(projectName, topicName, "0", GetCursorRequest.CursorType.OLDEST);
-
+        GetCursorResult c3 = client.getCursor(projectName, topicName, "0", timestamp - 7 * 12 * 3600 * 1000);
         Assert.assertEquals(c1.getCursor(), c2.getCursor());
+        Assert.assertEquals(c1.getRecordTime(), c2.getRecordTime());
+        Assert.assertEquals(c1.getSequence(), c2.getSequence());
+        Assert.assertEquals(c1.getSequence(), 0L);
+        Assert.assertEquals(c3.getCursor(), c2.getCursor());
     }
 
     /**
@@ -109,7 +118,7 @@ public class GetCursorTest {
      */
     @Test
     public void testGetCursorByT3() {
-
+        putRecords("0", 3);
         RecordSchema schema = new RecordSchema();
         schema.addField(new Field("test", FieldType.BIGINT));
 
@@ -127,6 +136,27 @@ public class GetCursorTest {
         GetCursorResult c2 = client.getCursor(projectName, topicName, "0", timestamp + 1);
 
         Assert.assertEquals(c2.getCursor(), nc);
+    }
+
+    /**
+     * use shard id 0
+     */
+    @Test
+    public void testGetCursorSequence() {
+
+        RecordSchema schema = new RecordSchema();
+        schema.addField(new Field("test", FieldType.BIGINT));
+        putRecords("0", 3);
+        GetCursorResult c1 = client.getCursor(projectName, topicName, "0", GetCursorRequest.CursorType.OLDEST);
+        GetRecordsResult r1 = client.getRecords(projectName, topicName, "0", c1.getCursor(), 10, schema);
+        long timestamp = r1.getRecords().get(0).getSystemTime();
+
+        Assert.assertEquals(timestamp, c1.getRecordTime());
+
+        GetCursorResult c2 = client.getCursor(projectName, topicName, "0", timestamp);
+        GetRecordsResult r2 = client.getRecords(projectName, topicName, "0", c2.getCursor(), 10, schema);
+
+        Assert.assertEquals(r2.getRecordCount(), 3);
     }
 
     /**

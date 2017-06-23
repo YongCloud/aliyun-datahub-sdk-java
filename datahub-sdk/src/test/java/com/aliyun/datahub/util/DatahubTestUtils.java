@@ -11,13 +11,14 @@ import com.aliyun.datahub.exception.AbortedException;
 import com.aliyun.datahub.model.RecordEntry;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.math3.random.RandomDataGenerator;
+import org.testng.annotations.Test;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
-
+@Test
 public class DatahubTestUtils {
 
     private static final Properties props = new Properties();
