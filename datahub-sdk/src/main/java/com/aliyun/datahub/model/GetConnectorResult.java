@@ -5,7 +5,7 @@ import com.aliyun.datahub.common.data.RecordType;
 
 import java.util.ArrayList;
 import java.util.List;
-
+@Deprecated
 public class GetConnectorResult {
     private String state;
     private ConnectorType type;

@@ -112,15 +112,71 @@ public interface SerializerFactory {
 
     public Deserializer<AppendConnectorFieldResult, AppendConnectorFieldRequest, Response> getAppendConnectorFieldResultDeser() throws DatahubClientException;
 
-    public Serializer<DefaultRequest, UpdateConnectorStateRequest> getUpdateConnectorStateRequestSer() throws DatahubClientException;
+    public Serializer<DefaultRequest, UpdateDataConnectorStateRequest> getUpdateConnectorStateRequestSer() throws DatahubClientException;
 
-    public Deserializer<UpdateConnectorStateResult, UpdateConnectorStateRequest, Response> getUpdateConnectorStateResultDeser() throws DatahubClientException;
+    public Deserializer<UpdateDataConnectorStateResult, UpdateDataConnectorStateRequest, Response> getUpdateConnectorStateResultDeser() throws DatahubClientException;
 
-    public Serializer<DefaultRequest, UpdateConnectorShardContextRequest> getUpdateConnectorShardContextRequestSer() throws DatahubClientException;
+    public Serializer<DefaultRequest, UpdateDataConnectorShardContextRequest> getUpdateConnectorShardContextRequestSer() throws DatahubClientException;
 
-    public Deserializer<UpdateConnectorShardContextResult, UpdateConnectorShardContextRequest, Response> getUpdateConnectorShardContextResultDeser() throws DatahubClientException;
+    public Deserializer<UpdateDataConnectorShardContextResult, UpdateDataConnectorShardContextRequest, Response> getUpdateConnectorShardContextResultDeser() throws DatahubClientException;
 
     public Serializer<DefaultRequest, GetMeteringInfoRequest> getGetMeteringInfoRequestSer() throws DatahubClientException;
 
     public Deserializer<GetMeteringInfoResult, GetMeteringInfoRequest, Response> getGetMeteringInfoResultDeser() throws DatahubClientException;
+
+    public Serializer<DefaultRequest, ListDataConnectorRequest> getListDataConnectorRequestSer() throws DatahubClientException;
+
+    public Deserializer<ListDataConnectorResult, ListDataConnectorRequest, Response> getListDataConnectorResultDeser() throws DatahubClientException;
+
+    public Serializer<DefaultRequest, CreateDataConnectorRequest> getCreateDataConnectorRequestSer() throws DatahubClientException;
+
+    public Deserializer<CreateDataConnectorResult, CreateDataConnectorRequest, Response> getCreateDataConnectorResultDeser() throws DatahubClientException;
+
+    public Serializer<DefaultRequest, GetDataConnectorRequest> getGetDataConnectorRequestSer() throws DatahubClientException;
+
+    public Deserializer<GetDataConnectorResult, GetDataConnectorRequest, Response> getGetDataConnectorResultDeser() throws DatahubClientException;
+
+    public Serializer<DefaultRequest, DeleteDataConnectorRequest> getDeleteDataConnectorRequestSer() throws DatahubClientException;
+
+    public Deserializer<DeleteDataConnectorResult, DeleteDataConnectorRequest, Response> getDeleteDataConnectorResultDeser() throws DatahubClientException;
+
+    public Serializer<DefaultRequest, ReloadDataConnectorRequest> getReloadDataConnectorRequestSer() throws DatahubClientException;
+
+    public Deserializer<ReloadDataConnectorResult, ReloadDataConnectorRequest, Response> getReloadDataConnectorResultDeser() throws DatahubClientException;
+
+    public Serializer<DefaultRequest, GetDataConnectorShardStatusRequest> getGetDataConnectorShardStatusRequestSer() throws DatahubClientException;
+
+    public Deserializer<GetDataConnectorShardStatusResult, GetDataConnectorShardStatusRequest, Response> getGetDataConnectorShardStatusResultDeser() throws DatahubClientException;
+
+    public Serializer<DefaultRequest, AppendDataConnectorFieldRequest> getAppendDataConnectorFieldRequestSer() throws DatahubClientException;
+
+    public Deserializer<AppendDataConnectorFieldResult, AppendDataConnectorFieldRequest, Response> getAppendDataConnectorFieldResultDeser() throws DatahubClientException;
+
+    public Serializer<DefaultRequest, CreateSubscriptionRequest> getCreateSubscriptionRequestSer() throws DatahubClientException;
+
+    public Deserializer<CreateSubscriptionResult, CreateSubscriptionRequest, Response> getCreateSubscriptionResultDeser() throws DatahubClientException;
+
+    public Serializer<DefaultRequest, DeleteSubscriptionRequest> getDeleteSubscriptionRequestSer() throws DatahubClientException;
+
+    public Deserializer<DeleteSubscriptionResult, DeleteSubscriptionRequest, Response> getDeleteSubscriptionResultDeser() throws DatahubClientException;
+
+    public Serializer<DefaultRequest, GetSubscriptionOffsetRequest> getGetSubscriptionOffsetsRequestSer() throws DatahubClientException;
+
+    public Deserializer<GetSubscriptionOffsetResult, GetSubscriptionOffsetRequest, Response> getGetSubscriptionOffsetResultDeser() throws DatahubClientException;
+
+    public Serializer<DefaultRequest, GetSubscriptionRequest> getGetSubscriptionRequestSer() throws DatahubClientException;
+
+    public Deserializer<GetSubscriptionResult, GetSubscriptionRequest, Response> getGetSubscriptionResultDeser() throws DatahubClientException;
+
+    public Serializer<DefaultRequest, QuerySubscriptionRequest> getQuerySubscriptionRequestSer() throws DatahubClientException;
+
+    public Deserializer<QuerySubscriptionResult, QuerySubscriptionRequest, Response> getQuerySubscriptionResultDeser() throws DatahubClientException;
+
+    public Serializer<DefaultRequest, CommitSubscriptionOffsetRequest> getUpdateSubscriptionOffsetRequestSer() throws DatahubClientException;
+
+    public Deserializer<UpdateSubscriptionOffsetResult, CommitSubscriptionOffsetRequest, Response> getUpdateSubscriptionOffsetResultDeser() throws  DatahubClientException;
+
+    public Serializer<DefaultRequest, UpdateSubscriptionRequest> getUpdateSubscriptionRequestSer() throws DatahubClientException;
+
+    public Deserializer<UpdateSubscriptionResult, UpdateSubscriptionRequest, Response> getUpdateSubscriptionResultDerser() throws DatahubClientException;
 }

@@ -2,7 +2,7 @@ package com.aliyun.datahub.model;
 
 import java.util.ArrayList;
 import java.util.List;
-
+@Deprecated
 public class ListConnectorResult {
     private List<String> connectors;
 

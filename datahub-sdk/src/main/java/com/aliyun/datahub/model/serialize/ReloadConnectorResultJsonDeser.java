@@ -5,7 +5,7 @@ import com.aliyun.datahub.exception.DatahubServiceException;
 import com.aliyun.datahub.model.ReloadConnectorRequest;
 import com.aliyun.datahub.model.ReloadConnectorResult;
 
-
+@Deprecated
 public class ReloadConnectorResultJsonDeser implements Deserializer<ReloadConnectorResult,ReloadConnectorRequest,Response> {
     @Override
     public ReloadConnectorResult deserialize(ReloadConnectorRequest request, Response response) throws DatahubServiceException {

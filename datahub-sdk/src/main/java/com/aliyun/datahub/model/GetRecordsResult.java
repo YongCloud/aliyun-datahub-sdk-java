@@ -22,6 +22,11 @@ public class GetRecordsResult {
      * 
      */
     private List<RecordEntry> records;
+    /**
+     * The start sequence of the first record.
+     * If no records in result object, then startSeq is -1.
+     */
+    private long startSeq;
 
 
     public List<RecordEntry> getRecords() {
@@ -42,5 +47,13 @@ public class GetRecordsResult {
 
     public int getRecordCount() {
         return records == null ? 0 : records.size();
+    }
+
+    public long getStartSeq() {
+        return startSeq;
+    }
+
+    public void setStartSeq(long startSeq) {
+        this.startSeq = startSeq;
     }
 }

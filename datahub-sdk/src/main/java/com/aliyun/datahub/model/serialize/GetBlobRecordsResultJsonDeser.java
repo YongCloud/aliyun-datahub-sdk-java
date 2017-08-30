@@ -34,7 +34,8 @@ public class GetBlobRecordsResultJsonDeser implements Deserializer<GetBlobRecord
         }
 
         rs.setNextCursor(tree.get("NextCursor").asText());
-
+        long sequence = tree.get("StartSeq").asLong();
+        rs.setStartSeq(sequence);
         JsonNode recordsNode = tree.get("Records");
 
         List<BlobRecordEntry> records = new ArrayList<BlobRecordEntry>();
@@ -45,7 +46,10 @@ public class GetBlobRecordsResultJsonDeser implements Deserializer<GetBlobRecord
             JsonNode time = record.get("SystemTime");
             JsonNode data = record.get("Data");
             JsonNode attrs = record.get("Attributes");
-
+            
+            // sequence
+            entry.setSequence(sequence++);
+            
             // time
             entry.setSystemTime(time.asLong());
 

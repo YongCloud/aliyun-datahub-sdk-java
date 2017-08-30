@@ -4,7 +4,7 @@ import com.aliyun.datahub.common.transport.DefaultRequest;
 import com.aliyun.datahub.common.transport.HttpMethod;
 import com.aliyun.datahub.exception.DatahubClientException;
 import com.aliyun.datahub.model.DeleteConnectorRequest;
-
+@Deprecated
 public class DeleteConnectorRequestJsonSer implements Serializer<DefaultRequest, DeleteConnectorRequest> {
     @Override
     public DefaultRequest serialize(DeleteConnectorRequest request) throws DatahubClientException {

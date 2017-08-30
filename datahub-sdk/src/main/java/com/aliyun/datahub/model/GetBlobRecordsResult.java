@@ -17,6 +17,11 @@ public class GetBlobRecordsResult {
      */
     private String nextCursor;
     /**
+     * The start sequence of the first record.
+     * If no records in result object, then startSeq is -1.
+     */
+    private long startSeq;
+    /**
      * 
      * The data records retrieved from the shard.
      * 
@@ -41,5 +46,13 @@ public class GetBlobRecordsResult {
 
     public int getRecordCount() {
         return records == null ? 0 : records.size();
+    }
+    
+    public long getStartSeq() {
+        return startSeq;
+    }
+
+    public void setStartSeq(long startSeq) {
+        this.startSeq = startSeq;
     }
 }

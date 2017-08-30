@@ -21,16 +21,20 @@ package com.aliyun.datahub.rest;
 
 import com.aliyun.datahub.auth.Account;
 import com.aliyun.datahub.common.transport.*;
+import com.aliyun.datahub.common.util.JacksonParser;
 import com.aliyun.datahub.common.util.RetryUtil;
-import com.aliyun.datahub.exception.DatahubClientException;
 import com.aliyun.datahub.exception.DatahubServiceException;
 import com.aliyun.datahub.common.transport.DefaultRequest;
 import com.aliyun.datahub.model.compress.Compression;
 import com.aliyun.datahub.model.compress.CompressionFormat;
+import com.aliyun.datahub.model.serialize.JsonErrorParser;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.type.TypeReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.concurrent.Callable;
 
 /**
@@ -96,6 +100,10 @@ public class RestClient {
     }
 
     private RetryLogger logger = null;
+
+    private boolean enableP2P = false;
+    private String serverEndpoint = null;
+    private int requestCount = 1000;
 
     /**
      * 创建RestClient对象
@@ -300,6 +308,17 @@ public class RestClient {
      * @return response
      */
     public Response requestWithNoRetry(DefaultRequest request) {
+        return requestWithNoRetry(request, enableP2P);
+    }
+
+    /**
+     * 没有重试的request
+     *
+     * @param request request实体
+     * @param p2p p2p模式
+     * @return response
+     */
+    public Response requestWithNoRetry(DefaultRequest request, boolean p2p) {
         if (compressionFormat != null && request.getBody() != null) {
             request.addHeader(Headers.CONTENT_ENCODING, compressionFormat.toString());
             if (compressionFormat.equals(CompressionFormat.LZ4)) {
@@ -325,7 +344,12 @@ public class RestClient {
 
         Response response = null;
         try {
-            response = transport.request(request);
+            if (p2p) {
+                updateRoute();
+                response = transport.request(request, serverEndpoint);
+            } else {
+                response = transport.request(request);
+            }
         } catch (IOException e) {
             throw new DatahubServiceException(e.getMessage(), e);
         }
@@ -565,5 +589,44 @@ public class RestClient {
 
     public void setSecureTransport(boolean secureTransport) {
         this.secureTransport = secureTransport;
+    }
+
+    public void close() {
+        transport.close();
+    }
+
+    public void enableP2P(boolean enabled) {
+        this.enableP2P = enabled;
+    }
+
+    private void updateRoute() {
+        if (requestCount >= 1000) {
+            try {
+                DefaultRequest req = new DefaultRequest();
+                req.setHttpMethod(HttpMethod.GET);
+                req.setResource("/system/status");
+
+                Response resp = requestWithNoRetry(req, false);
+                if (!resp.isOK()) {
+                    throw JsonErrorParser.getInstance().parse(resp);
+                }
+
+                ObjectMapper mapper = JacksonParser.getObjectMapper();
+
+                // convert JSON string to Map
+                Map<String, String> map = mapper.readValue(resp.getBody(), new TypeReference<Map<String, String>>() {
+                });
+
+                String serverIp = map.get("IP");
+                if (serverIp != null) {
+                    serverEndpoint = "http://" + serverIp;
+                }
+                requestCount = 0;
+            } catch (IOException e) {
+                // ignore
+            }
+        } else {
+            ++requestCount;
+        }
     }
 }

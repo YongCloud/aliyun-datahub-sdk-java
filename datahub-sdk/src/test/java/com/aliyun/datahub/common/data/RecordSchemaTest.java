@@ -18,6 +18,7 @@ public class RecordSchemaTest {
         schema.addField(new Field("timestamp", FieldType.TIMESTAMP));
         schema.addField(new Field("boolean", FieldType.BOOLEAN));
         schema.addField(new Field("double", FieldType.DOUBLE));
+        schema.addField(new Field("decimal", FieldType.DECIMAL));
     }
 
     @Test (expectedExceptions = IllegalArgumentException.class, expectedExceptionsMessageRegExp = "Field is null.")
@@ -42,13 +43,14 @@ public class RecordSchemaTest {
         Field timestampField = new Field("timestamp", FieldType.TIMESTAMP);
         Field booleanField = new Field("boolean", FieldType.BOOLEAN);
         Field doubleField = new Field("double", FieldType.DOUBLE);
+        Field decimalField = new Field("decimal", FieldType.DECIMAL);
         schema.addField(stringField);
         schema.addField(bigintField);
         schema.addField(timestampField);
         schema.addField(booleanField);
         schema.addField(doubleField);
-
-        Assert.assertEquals(schema.getFields().size(), 5);
+        schema.addField(decimalField);
+        Assert.assertEquals(schema.getFields().size(), 6);
         Assert.assertEquals(schema.getField(0).getName(), stringField.getName());
         Assert.assertEquals(schema.getField(0).getType(), stringField.getType());
         Assert.assertEquals(schema.getField(1).getName(), bigintField.getName());
@@ -59,6 +61,8 @@ public class RecordSchemaTest {
         Assert.assertEquals(schema.getField(3).getType(), booleanField.getType());
         Assert.assertEquals(schema.getField(4).getType(), doubleField.getType());
         Assert.assertEquals(schema.getField(4).getType(), doubleField.getType());
+        Assert.assertEquals(schema.getField(5).getType(), decimalField.getType());
+        Assert.assertEquals(schema.getField(5).getType(), decimalField.getType());
 
         Assert.assertEquals(schema.getField("string").getName(), stringField.getName());
         Assert.assertEquals(schema.getField("string").getType(), stringField.getType());
@@ -70,6 +74,8 @@ public class RecordSchemaTest {
         Assert.assertEquals(schema.getField("boolean").getType(), booleanField.getType());
         Assert.assertEquals(schema.getField("double").getType(), doubleField.getType());
         Assert.assertEquals(schema.getField("double").getType(), doubleField.getType());
+        Assert.assertEquals(schema.getField("decimal").getType(), decimalField.getType());
+        Assert.assertEquals(schema.getField("decimal").getType(), decimalField.getType());
     }
 
     @Test (expectedExceptions = IllegalArgumentException.class, expectedExceptionsMessageRegExp = "idx out of range")
@@ -146,15 +152,16 @@ public class RecordSchemaTest {
         Field timestampField = new Field("timestamp", FieldType.TIMESTAMP);
         Field booleanField = new Field("boolean", FieldType.BOOLEAN);
         Field doubleField = new Field("double", FieldType.DOUBLE);
+        Field decimalField = new Field("decimal", FieldType.DECIMAL);
         fields.add(stringField);
         fields.add(bigintField);
         fields.add(timestampField);
         fields.add(booleanField);
         fields.add(doubleField);
-
+        fields.add(decimalField);
         schema.setFields(fields);
 
-        Assert.assertEquals(schema.getFields().size(), 5);
+        Assert.assertEquals(schema.getFields().size(), 6);
         Assert.assertEquals(schema.getField(0).getName(), stringField.getName());
         Assert.assertEquals(schema.getField(0).getType(), stringField.getType());
         Assert.assertEquals(schema.getField(1).getName(), bigintField.getName());
@@ -165,7 +172,8 @@ public class RecordSchemaTest {
         Assert.assertEquals(schema.getField(3).getType(), booleanField.getType());
         Assert.assertEquals(schema.getField(4).getType(), doubleField.getType());
         Assert.assertEquals(schema.getField(4).getType(), doubleField.getType());
-
+        Assert.assertEquals(schema.getField(5).getType(), decimalField.getType());
+        Assert.assertEquals(schema.getField(5).getType(), decimalField.getType());
         fields.clear();
         schema.setFields(fields);
 
@@ -190,15 +198,16 @@ public class RecordSchemaTest {
         Field timestampField = new Field("timestamp", FieldType.TIMESTAMP);
         Field booleanField = new Field("boolean", FieldType.BOOLEAN);
         Field doubleField = new Field("double", FieldType.DOUBLE);
-
+        Field decimalField = new Field("decimal", FieldType.DECIMAL);
         schema.addField(stringField);
         schema.addField(bigintField);
         schema.addField(timestampField);
         schema.addField(booleanField);
         schema.addField(doubleField);
+        schema.addField(decimalField);
 
         fields = schema.getFields();
-        Assert.assertEquals(fields.size(), 5);
+        Assert.assertEquals(fields.size(), 6);
         Assert.assertEquals(fields.get(0).getName(), stringField.getName());
         Assert.assertEquals(fields.get(0).getType(), stringField.getType());
         Assert.assertEquals(fields.get(1).getName(), bigintField.getName());
@@ -209,6 +218,8 @@ public class RecordSchemaTest {
         Assert.assertEquals(fields.get(3).getType(), booleanField.getType());
         Assert.assertEquals(fields.get(4).getType(), doubleField.getType());
         Assert.assertEquals(fields.get(4).getType(), doubleField.getType());
+        Assert.assertEquals(fields.get(5).getType(), decimalField.getType());
+        Assert.assertEquals(fields.get(5).getType(), decimalField.getType());
 
         fields.clear();
         Assert.assertNotEquals(schema.getFields().size(), 0);
@@ -240,5 +251,11 @@ public class RecordSchemaTest {
         Assert.assertEquals(schema.toJsonString(), "{\"fields\":[{\"type\":\"STRING\",\"name\":\"str\"},{\"type\":\"BIGINT\",\"name\":\"int\"},{\"type\":\"TIMESTAMP\",\"name\":\"time\"},{\"type\":\"BOOLEAN\",\"name\":\"bool\"}]}");
         schema.addField(new Field("double", FieldType.DOUBLE, true));
         Assert.assertEquals(schema.toJsonString(), "{\"fields\":[{\"type\":\"STRING\",\"name\":\"str\"},{\"type\":\"BIGINT\",\"name\":\"int\"},{\"type\":\"TIMESTAMP\",\"name\":\"time\"},{\"type\":\"BOOLEAN\",\"name\":\"bool\"},{\"type\":\"DOUBLE\",\"name\":\"double\",\"notnull\":true}]}");
+        schema.addField(new Field("decimal", FieldType.DECIMAL, true));
+        Assert.assertEquals(schema.toJsonString(), "{\"fields\":[{\"type\":\"STRING\",\"name\":\"str\"}," +
+            "{\"type\":\"BIGINT\",\"name\":\"int\"},{\"type\":\"TIMESTAMP\",\"name\":\"time\"}," +
+            "{\"type\":\"BOOLEAN\",\"name\":\"bool\"}," +
+            "{\"type\":\"DOUBLE\",\"name\":\"double\",\"notnull\":true}," +
+            "{\"type\":\"DECIMAL\",\"name\":\"decimal\",\"notnull\":true}]}");
     }
 }

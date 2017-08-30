@@ -1,7 +1,7 @@
 package com.aliyun.datahub.model;
 
 import com.aliyun.datahub.exception.InvalidParameterException;
-
+@Deprecated
 public class GetConnectorShardStatusRequest {
     private String projectName;
     private String topicName;

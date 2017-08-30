@@ -7,6 +7,8 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.ObjectNode;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.HashMap;
 
 public class RecordEntry extends Record {
@@ -58,6 +60,8 @@ public class RecordEntry extends Record {
                 len += 8;
             } else if (field.getType() == FieldType.STRING) {
                 len += ((String) values[i]).length();
+            } else if (field.getType() == FieldType.DECIMAL) {
+                len += ((BigDecimal) values[i]).toPlainString().length();
             } else {
                 throw new IllegalArgumentException("unknown record type :" + field.getType().name());
             }
@@ -194,6 +198,27 @@ public class RecordEntry extends Record {
         return getString(getFieldIndex(fieldName));
     }
 
+    public void setDecimal(int idx, BigDecimal value) {
+        values[idx] = value;
+    }
+
+
+    public BigDecimal getDecimal(int idx) {
+        Object o = get(idx);
+        if (o == null) {
+            return null;
+        }
+        return (BigDecimal) o;
+    }
+
+    public void setDecimal(String fieldName, BigDecimal value) {
+        setDecimal(getFieldIndex(fieldName), value);
+    }
+
+    public BigDecimal getDecimal(String fieldName) {
+        return getDecimal(getFieldIndex(fieldName));
+    }
+
     public int getFieldIndex(String name) {
         if (name == null) {
             throw new IllegalArgumentException("Field name is null");
@@ -217,7 +242,11 @@ public class RecordEntry extends Record {
         ArrayNode record = node.putArray("Data");
         for (int i = 0; i < this.getFieldCount(); i++) {
             if (this.get(i) != null) {
-                record.add(String.valueOf(this.get(i)));
+                if (fields[i].getType() == FieldType.DECIMAL) {
+                    record.add(((BigDecimal)this.get(i)).toPlainString());
+                } else {
+                    record.add(String.valueOf(this.get(i)));
+                }
             } else {
                 record.add((JsonNode)null);
             }

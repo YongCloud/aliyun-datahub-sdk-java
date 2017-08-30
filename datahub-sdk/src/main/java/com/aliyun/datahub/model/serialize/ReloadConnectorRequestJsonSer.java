@@ -11,7 +11,7 @@ import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.ObjectNode;
 
 import java.io.IOException;
-
+@Deprecated
 public class ReloadConnectorRequestJsonSer implements Serializer<DefaultRequest, ReloadConnectorRequest> {
     @Override
     public DefaultRequest serialize(ReloadConnectorRequest request) throws DatahubClientException {

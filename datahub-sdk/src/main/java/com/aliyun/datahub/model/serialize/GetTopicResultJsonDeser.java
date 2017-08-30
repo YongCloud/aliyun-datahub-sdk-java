@@ -80,6 +80,8 @@ public class GetTopicResultJsonDeser implements Deserializer<GetTopicResult, Get
                         type = FieldType.BOOLEAN;
                     } else if (strType.equals(FieldType.BIGINT.toString())) {
                         type = FieldType.BIGINT;
+                    } else if (strType.equals(FieldType.DECIMAL.toString())) {
+                        type = FieldType.DECIMAL;
                     } else {
                         throw new DatahubServiceException(
                                 "UnsupportedFieldType", "Unsupported field type: " + strType, response);

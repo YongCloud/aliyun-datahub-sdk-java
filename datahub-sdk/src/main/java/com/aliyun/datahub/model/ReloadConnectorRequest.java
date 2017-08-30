@@ -3,7 +3,7 @@ package com.aliyun.datahub.model;
 import com.aliyun.datahub.exception.InvalidParameterException;
 
 import java.util.List;
-
+@Deprecated
 public class ReloadConnectorRequest {
     private String projectName;
     private String topicName;

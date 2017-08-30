@@ -11,7 +11,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
-
+@Deprecated
 public class GetConnectorShardStatusResultJsonDeser implements Deserializer<GetConnectorShardStatusResult,GetConnectorShardStatusRequest,Response> {
     @Override
     public GetConnectorShardStatusResult deserialize(GetConnectorShardStatusRequest request, Response response) throws DatahubServiceException {

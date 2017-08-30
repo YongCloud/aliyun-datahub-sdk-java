@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
+@Deprecated
 public class GetConnectorResultJsonDeser implements Deserializer<GetConnectorResult,GetConnectorRequest,Response> {
     @Override
     public GetConnectorResult deserialize(GetConnectorRequest request, Response response) throws DatahubServiceException {

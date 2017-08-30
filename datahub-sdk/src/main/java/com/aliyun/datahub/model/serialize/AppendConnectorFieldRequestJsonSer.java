@@ -11,6 +11,7 @@ import org.codehaus.jackson.node.ObjectNode;
 
 import java.io.IOException;
 
+@Deprecated
 public class AppendConnectorFieldRequestJsonSer implements Serializer<DefaultRequest, AppendConnectorFieldRequest> {
     @Override
     public DefaultRequest serialize(AppendConnectorFieldRequest request) throws DatahubClientException {

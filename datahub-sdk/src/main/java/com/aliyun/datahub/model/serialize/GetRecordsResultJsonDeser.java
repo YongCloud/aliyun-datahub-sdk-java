@@ -15,6 +15,7 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.*;
 
 public class GetRecordsResultJsonDeser implements Deserializer<GetRecordsResult, GetRecordsRequest, Response> {
@@ -36,6 +37,8 @@ public class GetRecordsResultJsonDeser implements Deserializer<GetRecordsResult,
         }
 
         rs.setNextCursor(tree.get("NextCursor").asText());
+        long sequence = tree.get("StartSeq").asLong();
+        rs.setStartSeq(sequence);
 
         JsonNode recordsNode = tree.get("Records");
 
@@ -47,6 +50,9 @@ public class GetRecordsResultJsonDeser implements Deserializer<GetRecordsResult,
             JsonNode time = record.get("SystemTime");
             JsonNode data = record.get("Data");
             JsonNode attrs = record.get("Attributes");
+
+            // sequence
+            entry.setSequence(sequence++);
 
             // time
             entry.setSystemTime(time.asLong());
@@ -83,6 +89,8 @@ public class GetRecordsResultJsonDeser implements Deserializer<GetRecordsResult,
                             entry.setString(i, node.asText());
                         } else if (field.getType() == FieldType.TIMESTAMP) {
                             entry.setTimeStamp(i, Long.parseLong(node.asText()));
+                        } else if (field.getType() == FieldType.DECIMAL) {
+                            entry.setDecimal(i, new BigDecimal(node.asText()));
                         } else {
                             throw new MalformedRecordException("unsupported data type:" + field.getType().name(), response);
                         }

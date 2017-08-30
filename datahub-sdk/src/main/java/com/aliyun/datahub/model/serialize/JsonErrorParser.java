@@ -27,11 +27,11 @@ public class JsonErrorParser implements ErrorParser{
                 ex = new DatahubServiceException(new String(response.getBody()));
             } else {
                 String er = node.asText();
-                if (er.equals("InvalidParameter")) {
+                if (er.equals("InvalidParameter") || er.equals("InvalidSubscription")) {
                     ex = new InvalidParameterException(tree.get("ErrorMessage").asText());
                 } else if (er.equals("InvalidCursor")) {
                     ex = new InvalidCursorException(tree.get("ErrorMessage").asText());
-                } else if (er.equals("NoSuchTopic") || er.equals("NoSuchProject")
+                } else if (er.equals("NoSuchTopic") || er.equals("NoSuchProject") || er.equals("NoSuchSubscription")
                         || er.equals("NoSuchShard") || er.equals("NoSuchConnector") || er.equals("NoSuchMeteringInfo")) {
                     ex = new ResourceNotFoundException(tree.get("ErrorMessage").asText());
                 } else if (er.equals("ProjectAlreadyExist")
@@ -44,6 +44,8 @@ public class JsonErrorParser implements ErrorParser{
                     ex = new NoPermissionException(tree.get("ErrorMessage").asText());
                 } else if (er.equals("InvalidShardOperation")) {
                     ex = new InvalidOperationException(tree.get("ErrorMessage").asText());
+                } else if (er.equals("OperationDenied")) {
+                    ex = new OperationDeniedException(tree.get("ErrorMessage").asText());
                 } else if (er.equals("LimitExceeded")) {
                     ex = new LimitExceededException(tree.get("ErrorMessage").asText());
                 } else if (er.equals("OdpsServiceError")) {

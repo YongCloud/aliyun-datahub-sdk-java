@@ -51,6 +51,21 @@ public interface Transport {
 
     /**
      * 发起HTTP请求
+     *
+     *
+     * 使用{@code request()}发起HTTP请求, 请求的body需要通过 DefaultRequest.setBody(byte[]
+     * body)}提供, 响应的body数据直接通过返回的 Response.getBody()}获取
+     *
+     *
+     * @param req Request
+     * @param endpoint
+     * @return Response
+     * @throws IOException
+     */
+    public Response request(DefaultRequest req, String endpoint) throws IOException;
+
+    /**
+     * 发起HTTP请求
      * 
      * 
      * 使用{@code connect()}发起请求, 请求的响应的body需要通过 Connection}来处理,
@@ -62,4 +77,6 @@ public interface Transport {
      * @throws IOException
      */
     public Connection connect(DefaultRequest req) throws IOException;
+
+    public void close();
 }

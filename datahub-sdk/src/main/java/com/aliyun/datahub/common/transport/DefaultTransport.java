@@ -46,6 +46,11 @@ public class DefaultTransport implements Transport {
     }
 
     @Override
+    public void close() {
+
+    }
+
+    @Override
     public Response request(DefaultRequest req) throws IOException {
         Connection conn = connect(req);
         DefaultResponse resp = null;
@@ -68,6 +73,11 @@ public class DefaultTransport implements Transport {
             conn.disconnect();
         }
         return resp;
+    }
+
+    @Override
+    public Response request(DefaultRequest req, String endpoint) throws IOException {
+        return request(req);
     }
 
 }

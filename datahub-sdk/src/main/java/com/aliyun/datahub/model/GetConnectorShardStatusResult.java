@@ -1,5 +1,5 @@
 package com.aliyun.datahub.model;
-
+@Deprecated
 public class GetConnectorShardStatusResult {
     private long startSequence;
     private long endSequence;

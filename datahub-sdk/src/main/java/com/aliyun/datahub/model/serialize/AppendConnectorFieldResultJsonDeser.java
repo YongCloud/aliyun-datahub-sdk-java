@@ -5,7 +5,7 @@ import com.aliyun.datahub.exception.DatahubServiceException;
 import com.aliyun.datahub.model.AppendConnectorFieldRequest;
 import com.aliyun.datahub.model.AppendConnectorFieldResult;
 
-
+@Deprecated
 public class AppendConnectorFieldResultJsonDeser implements Deserializer<AppendConnectorFieldResult,AppendConnectorFieldRequest,Response> {
     @Override
     public AppendConnectorFieldResult deserialize(AppendConnectorFieldRequest request, Response response) throws DatahubServiceException {

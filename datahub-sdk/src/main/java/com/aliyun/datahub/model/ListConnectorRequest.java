@@ -1,5 +1,5 @@
 package com.aliyun.datahub.model;
-
+@Deprecated
 public class ListConnectorRequest {
     private String topicName;
     private String projectName;

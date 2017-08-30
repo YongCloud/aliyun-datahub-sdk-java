@@ -18,6 +18,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.Test;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.*;
 @Test
@@ -59,6 +60,7 @@ public class PutRecordsTest {
         schema.addField(new Field("c", FieldType.DOUBLE));
         schema.addField(new Field("d", FieldType.TIMESTAMP));
         schema.addField(new Field("e", FieldType.BOOLEAN));
+        schema.addField(new Field("f", FieldType.DECIMAL));
         String comment = "";
         topic = project.createTopic(topicName, shardCount, lifeCycle, type, schema, comment);
         topic.waitForShardReady();
@@ -76,6 +78,7 @@ public class PutRecordsTest {
         entry.setDouble("c", 0.0);
         entry.setTimeStamp("d", 123456789000000L);
         entry.setBoolean("e", true);
+        entry.setDecimal("f", new BigDecimal(10000.000001));
         entry.putAttribute("partition", "ds=2016");
         return entry;
     }
@@ -178,7 +181,7 @@ public class PutRecordsTest {
     public void testPutRecordsRecreateTopic() {
         RecordSchema schema = topic.getRecordSchema();
         List<RecordEntry> recordEntries = new ArrayList<RecordEntry>();
-        long recordNum = 10;
+        int recordNum = 10;
 
         for (long n = 0; n < recordNum; n++) {
             RecordEntry entry = genData(schema);
@@ -192,10 +195,15 @@ public class PutRecordsTest {
 
         project.deleteTopic(topicName);
 
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+
+        }
         topic = project.createTopic(topicName, shardCount, lifeCycle, RecordType.TUPLE, schema, "");
         topic.waitForShardReady();
         result = topic.putRecords(recordEntries);
-        Assert.assertNotEquals(result.getFailedRecordCount(), recordNum);
+        Assert.assertEquals(result.getFailedRecordCount(), recordNum);
         Assert.assertEquals(result.getFailedRecordError().get(0).getErrorcode(), "InternalServerError");
         Assert.assertEquals(result.getFailedRecordError().get(0).getMessage(), "Service topic meta cache refreshing, please try again later.");
     }
@@ -462,7 +470,6 @@ public class PutRecordsTest {
         recordEntries.get(0).setDouble("c", DatahubTestUtils.getRandomDecimal());
         recordEntries.get(0).setTimeStamp("d", DatahubTestUtils.MIN_TIMESTAMP_VALUE - 1);
         recordEntries.get(0).setBoolean("e", DatahubTestUtils.getRandomBoolean());
-
         result = topic.putRecords(recordEntries);
         Assert.assertEquals(result.getFailedRecordCount(), 1);
     }
@@ -721,6 +728,47 @@ public class PutRecordsTest {
         PutRecordsResult result = topic.putRecords(recordEntries);
         Assert.assertEquals(result.getFailedRecordCount(), 5);
         Assert.assertEquals(result.getFailedRecordIndex(), expectFailedIndex);
+        project.deleteTopic(topicName);
+    }
+
+    @Test
+    public void testRandomShardId() {
+        String topicName = DatahubTestUtils.getRandomTopicName();
+        shardCount = 3;
+        int lifeCycle = 3;
+        RecordType type = RecordType.TUPLE;
+        RecordSchema schema = new RecordSchema();
+        schema.addField(new Field("a", FieldType.STRING, true));
+        String comment = "topic with not null field";
+        topic = project.createTopic(topicName, shardCount, lifeCycle, type, schema, comment);
+        topic.waitForShardReady();
+
+        schema = topic.getRecordSchema();
+        List<RecordEntry> recordEntries = new ArrayList<RecordEntry>();
+        long recordNum = 10;
+
+        for (int n = 0; n < recordNum; n++) {
+            RecordEntry entry = new RecordEntry(schema);
+            entry.setString(0, "test");
+            recordEntries.add(entry);
+        }
+        PutRecordsResult result = topic.putRecords(recordEntries);
+        Assert.assertEquals(result.getFailedRecordCount(), 0);
+
+        List<ShardEntry> shards = topic.listShard();
+        int flag = 0;
+        for (ShardEntry e : shards) {
+            String cursor = topic.getCursor(e.getShardId(), GetCursorRequest.CursorType.OLDEST);
+            GetRecordsResult getRecordsResult = topic.getRecords(e.getShardId(), cursor, (int)recordNum);
+
+            if (getRecordsResult.getRecordCount() != 0){
+                Assert.assertEquals(getRecordsResult.getRecordCount(), recordNum);
+                flag++;
+            }
+        }
+
+        // one shard has all records
+        Assert.assertEquals(flag, 1);
         project.deleteTopic(topicName);
     }
 }

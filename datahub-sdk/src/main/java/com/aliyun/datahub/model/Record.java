@@ -16,6 +16,7 @@ public abstract class Record {
     private String shardId;
     private Map<String, String> attributes = new HashMap<String, String>();
     private long systemTime;
+    private long sequence;
 
     public Record() {}
 
@@ -58,6 +59,18 @@ public abstract class Record {
         this.hashKey = hashKey;
     }
 
+    public long getSequence() {
+        return sequence;
+    }
+
+    public void setSequence(long sequence) {
+        this.sequence = sequence;
+    }
+
+    public Offset getOffset() {
+        return new Offset(sequence + 1, systemTime);
+    }
+
     public Map<String, String> getAttributes() {
         return new HashMap<String, String>(attributes);
     }
@@ -75,8 +88,6 @@ public abstract class Record {
             node.put(DatahubConstants.PartitionKey, partitionKey);
         } else if (hashKey != null && !hashKey.isEmpty()) {
             node.put(DatahubConstants.HashKey, hashKey);
-        } else {
-            throw new DatahubClientException("Parameter shardId/partitionKey/hashKey not set.");
         }
 
         ObjectNode attr = node.putObject("Attributes");

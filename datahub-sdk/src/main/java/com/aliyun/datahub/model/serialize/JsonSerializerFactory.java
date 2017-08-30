@@ -273,23 +273,23 @@ public class JsonSerializerFactory implements SerializerFactory {
     }
 
     @Override
-    public Serializer<DefaultRequest, UpdateConnectorStateRequest> getUpdateConnectorStateRequestSer() {
-        return UpdateConnectorStateRequestJsonSer.getInstance();
+    public Serializer<DefaultRequest, UpdateDataConnectorStateRequest> getUpdateConnectorStateRequestSer() {
+        return UpdateDataConnectorStateRequestJsonSer.getInstance();
     }
 
     @Override
-    public Deserializer<UpdateConnectorStateResult, UpdateConnectorStateRequest, Response> getUpdateConnectorStateResultDeser() {
-        return UpdateConnectorStateResultJsonDeser.getInstance();
+    public Deserializer<UpdateDataConnectorStateResult, UpdateDataConnectorStateRequest, Response> getUpdateConnectorStateResultDeser() {
+        return UpdateDataConnectorStateResultJsonDeser.getInstance();
     }
 
     @Override
-    public Serializer<DefaultRequest, UpdateConnectorShardContextRequest> getUpdateConnectorShardContextRequestSer() {
-        return UpdateConnectorShardContextRequestJsonSer.getInstance();
+    public Serializer<DefaultRequest, UpdateDataConnectorShardContextRequest> getUpdateConnectorShardContextRequestSer() {
+        return UpdateDataConnectorShardContextRequestJsonSer.getInstance();
     }
 
     @Override
-    public Deserializer<UpdateConnectorShardContextResult, UpdateConnectorShardContextRequest, Response> getUpdateConnectorShardContextResultDeser() {
-        return UpdateConnectorShardContextResultJsonDeser.getInstance();
+    public Deserializer<UpdateDataConnectorShardContextResult, UpdateDataConnectorShardContextRequest, Response> getUpdateConnectorShardContextResultDeser() {
+        return UpdateDataConnectorShardContextResultJsonDeser.getInstance();
     }
 
     @Override
@@ -302,6 +302,147 @@ public class JsonSerializerFactory implements SerializerFactory {
         return GetMeteringInfoResultJsonDeser.getInstance();
     }
 
+
+    @Override
+    public Serializer<DefaultRequest, ListDataConnectorRequest> getListDataConnectorRequestSer() {
+        return ListDataConnectorRequestJsonSer.getInstance();
+    }
+
+    @Override
+    public Deserializer<ListDataConnectorResult, ListDataConnectorRequest, Response> getListDataConnectorResultDeser() {
+        return ListDataConnectorResultJsonDeser.getInstance();
+    }
+
+    @Override
+    public Serializer<DefaultRequest, CreateDataConnectorRequest> getCreateDataConnectorRequestSer() {
+        return CreateDataConnectorRequestJsonSer.getInstance();
+    }
+
+    @Override
+    public Deserializer<CreateDataConnectorResult, CreateDataConnectorRequest, Response> getCreateDataConnectorResultDeser() {
+        return CreateDataConnectorResultJsonDeser.getInstance();
+    }
+
+    @Override
+    public Serializer<DefaultRequest, GetDataConnectorRequest> getGetDataConnectorRequestSer() {
+        return GetDataConnectorRequestJsonSer.getInstance();
+    }
+
+    @Override
+    public Deserializer<GetDataConnectorResult, GetDataConnectorRequest, Response> getGetDataConnectorResultDeser() {
+        return GetDataConnectorResultJsonDeser.getInstance();
+    }
+
+    @Override
+    public Serializer<DefaultRequest, DeleteDataConnectorRequest> getDeleteDataConnectorRequestSer() {
+        return DeleteDataConnectorRequestJsonSer.getInstance();
+    }
+
+    @Override
+    public Deserializer<DeleteDataConnectorResult, DeleteDataConnectorRequest, Response> getDeleteDataConnectorResultDeser() {
+        return DeleteDataConnectorResultJsonDeser.getInstance();
+    }
+
+    @Override
+    public Serializer<DefaultRequest, ReloadDataConnectorRequest> getReloadDataConnectorRequestSer() {
+        return ReloadDataConnectorRequestJsonSer.getInstance();
+    }
+
+    @Override
+    public Deserializer<ReloadDataConnectorResult, ReloadDataConnectorRequest, Response> getReloadDataConnectorResultDeser() {
+        return ReloadDataConnectorResultJsonDeser.getInstance();
+    }
+    //
+
+    @Override
+    public Serializer<DefaultRequest, GetDataConnectorShardStatusRequest> getGetDataConnectorShardStatusRequestSer() {
+        return GetDataConnectorShardStatusRequestJsonSer.getInstance();
+    }
+
+    @Override
+    public Deserializer<GetDataConnectorShardStatusResult, GetDataConnectorShardStatusRequest, Response> getGetDataConnectorShardStatusResultDeser() {
+        return GetDataConnectorShardStatusResultJsonDeser.getInstance();
+    }
+    
+    @Override
+    public Serializer<DefaultRequest, AppendDataConnectorFieldRequest> getAppendDataConnectorFieldRequestSer() {
+        return AppendDataConnectorFieldRequestJsonSer.getInstance();
+    }
+
+    @Override
+    public Deserializer<AppendDataConnectorFieldResult, AppendDataConnectorFieldRequest, Response> getAppendDataConnectorFieldResultDeser() {
+        return AppendDataConnectorFieldResultJsonDeser.getInstance();
+    }
+
+    @Override
+    public Serializer<DefaultRequest, CreateSubscriptionRequest> getCreateSubscriptionRequestSer() throws DatahubClientException {
+        return CreateSubscriptionRequestJsonSer.getInstance();
+    }
+
+    @Override
+    public Deserializer<CreateSubscriptionResult, CreateSubscriptionRequest, Response> getCreateSubscriptionResultDeser() throws DatahubClientException {
+        return CreateSubscriptionResultJsonDeser.getInstance();
+    }
+
+    @Override
+    public Serializer<DefaultRequest, DeleteSubscriptionRequest> getDeleteSubscriptionRequestSer() throws DatahubClientException {
+        return DeleteSubscriptionRequestJsonSer.getInstance();
+    }
+
+    @Override
+    public Deserializer<DeleteSubscriptionResult, DeleteSubscriptionRequest, Response> getDeleteSubscriptionResultDeser() throws DatahubClientException {
+        return DeleteSubscriptionResultJsonDeser.getInstance();
+    }
+
+    @Override
+    public Serializer<DefaultRequest, GetSubscriptionOffsetRequest> getGetSubscriptionOffsetsRequestSer() throws DatahubClientException {
+        return GetSubscriptionOffsetRequestJsonSer.getInstance();
+    }
+
+    @Override
+    public Deserializer<GetSubscriptionOffsetResult, GetSubscriptionOffsetRequest, Response> getGetSubscriptionOffsetResultDeser() throws DatahubClientException {
+        return GetSubscriptionOffsetResultJsonDeser.getInstance();
+    }
+
+    @Override
+    public Serializer<DefaultRequest, GetSubscriptionRequest> getGetSubscriptionRequestSer() throws DatahubClientException {
+        return GetSubscriptionRequestJsonSer.getInstance();
+    }
+
+    @Override
+    public Deserializer<GetSubscriptionResult, GetSubscriptionRequest, Response> getGetSubscriptionResultDeser() throws DatahubClientException {
+        return GetSubscriptionResultJsonDeser.getInstance();
+    }
+
+    @Override
+    public Serializer<DefaultRequest, QuerySubscriptionRequest> getQuerySubscriptionRequestSer() throws DatahubClientException {
+        return QuerySubscriptionRequestJsonSer.getInstance();
+    }
+
+    @Override
+    public Deserializer<QuerySubscriptionResult, QuerySubscriptionRequest, Response> getQuerySubscriptionResultDeser() throws DatahubClientException {
+        return QuerySubscriptionResultJsonDeser.getInstance();
+    }
+
+    @Override
+    public Serializer<DefaultRequest, CommitSubscriptionOffsetRequest> getUpdateSubscriptionOffsetRequestSer() throws DatahubClientException {
+        return CommitSubscriptionOffsetRequestJsonSer.getInstance();
+    }
+
+    @Override
+    public Deserializer<UpdateSubscriptionOffsetResult, CommitSubscriptionOffsetRequest, Response> getUpdateSubscriptionOffsetResultDeser() throws DatahubClientException {
+        return CommitSubscriptionOffsetResultJsonDeser.getInstance();
+    }
+
+    @Override
+    public Serializer<DefaultRequest, UpdateSubscriptionRequest> getUpdateSubscriptionRequestSer() throws DatahubClientException {
+        return UpdateSubscriptionRequestJsonSer.getInstance();
+    }
+
+    @Override
+    public Deserializer<UpdateSubscriptionResult, UpdateSubscriptionRequest, Response> getUpdateSubscriptionResultDerser() throws DatahubClientException {
+        return UpdateSubscriptionResultJsonDeser.getInstance();
+    }
 
     private JsonSerializerFactory() {
     }

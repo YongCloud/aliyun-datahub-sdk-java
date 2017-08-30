@@ -10,7 +10,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ObjectNode;
 
 import java.io.IOException;
-
+@Deprecated
 public class GetConnectorShardStatusRequestJsonSer implements Serializer<DefaultRequest, GetConnectorShardStatusRequest> {
     @Override
     public DefaultRequest serialize(GetConnectorShardStatusRequest request) throws DatahubClientException {

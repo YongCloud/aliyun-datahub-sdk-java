@@ -21,6 +21,7 @@ package com.aliyun.datahub;
 
 import com.aliyun.datahub.auth.Account;
 import com.aliyun.datahub.common.transport.DefaultTransport;
+import com.aliyun.datahub.common.transport.JerseyTransport;
 import com.aliyun.datahub.model.compress.CompressionFormat;
 import com.aliyun.datahub.rest.RestClient;
 
@@ -35,12 +36,18 @@ public class DatahubConfiguration {
     /** default socket timeout time in seconds */
     public static int DEFAULT_SOCKET_TIMEOUT = 300;// seconds
 
+    public static int DEFAULT_TOTAL_CONNECTION_COUNT = 1000;
+
+    public static int DEFAULT_CONNECTION_COUNT_PER_ENDPOINT = 5;
+
     private Account account;
     private String endpoint;
     private String userAgent = "DATAHUB-SDK-JAVA";
 
     private int socketConnectTimeout = DEFAULT_SOCKET_CONNECT_TIMEOUT;
     private int socketTimeout = DEFAULT_SOCKET_TIMEOUT;
+    private int totalConnections = DEFAULT_TOTAL_CONNECTION_COUNT;
+    private int connectionsPerEndpoint = DEFAULT_CONNECTION_COUNT_PER_ENDPOINT;
     private boolean ignoreCerts = true;
     private CompressionFormat compressionFormat = null;
 
@@ -111,12 +118,28 @@ public class DatahubConfiguration {
         this.compressionFormat = compressionFormat;
     }
 
+    public int getTotalConnections() {
+        return totalConnections;
+    }
+
+    public void setTotalConnections(int totalConnections) {
+        this.totalConnections = totalConnections;
+    }
+
+    public int getConnectionsPerEndpoint() {
+        return connectionsPerEndpoint;
+    }
+
+    public void setConnectionsPerEndpoint(int connectionsPerEndpoint) {
+        this.connectionsPerEndpoint = connectionsPerEndpoint;
+    }
+
     public CompressionFormat getCompressionFormat() {
         return compressionFormat;
     }
 
     public RestClient newRestClient() {
-        RestClient client = new RestClient(new DefaultTransport(this), compressionFormat);
+        RestClient client = new RestClient(new JerseyTransport(this), compressionFormat);
         client.setAccount(account);
         client.setEndpoint(endpoint);
         client.setUserAgent(userAgent);

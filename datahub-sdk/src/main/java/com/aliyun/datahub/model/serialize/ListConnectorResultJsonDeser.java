@@ -11,7 +11,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Iterator;
-
+@Deprecated
 public class ListConnectorResultJsonDeser implements Deserializer<ListConnectorResult,ListConnectorRequest,Response> {
     @Override
     public ListConnectorResult deserialize(ListConnectorRequest request, Response response) throws DatahubServiceException {

@@ -5,7 +5,7 @@ import com.aliyun.datahub.exception.DatahubServiceException;
 import com.aliyun.datahub.model.CreateConnectorRequest;
 import com.aliyun.datahub.model.CreateConnectorResult;
 
-
+@Deprecated
 public class CreateConnectorResultJsonDeser implements Deserializer<CreateConnectorResult,CreateConnectorRequest,Response> {
     @Override
     public CreateConnectorResult deserialize(CreateConnectorRequest request, Response response) throws DatahubServiceException {

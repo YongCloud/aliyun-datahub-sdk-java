@@ -972,6 +972,73 @@ public class DatahubClient {
     }
 
     /**
+     * Create a Datahub project.
+     * The concept of project is used to serve multiple tenants.
+     *
+     * @param projectName
+     *         The name of the project.
+     * @param desc
+     *         The description of the project.
+     * @throws ResourceExistException
+     *         The project is already created.
+     * @throws InvalidParameterException
+     *         A specified parameter exceeds its restrictions, is not supported,
+     *         or can't be used. For more information, see the returned message.
+     */
+    public void createProject(String projectName, String desc) {
+        createProject(new CreateProjectRequest(projectName, desc));
+    }
+
+    /**
+     * Create a Datahub project.
+     * The concept of project is used to serve multiple tenants.
+     *
+     * @param request Represents the input for <code>CreateProject</code>.
+     * @throws ResourceExistException
+     *         The project is already created.
+     * @throws InvalidParameterException
+     *         A specified parameter exceeds its restrictions, is not supported,
+     *         or can't be used. For more information, see the returned message.
+     */
+    public void createProject(CreateProjectRequest request) {
+        DefaultRequest req = factory.getCreateProjectRequestSer().serialize(request);
+
+        Response response = this.restClient.requestWithNoRetry(req);
+
+        factory.getCreateProjectResultDeser().deserialize(request, response);
+    }
+
+    /**
+     * Delete a project and all its topics and data.
+     *
+     * @param projectName
+     *        The name of the project.
+     * @throws ResourceNotFoundException
+     *         The requested resource could not be found. The project might not
+     *         be specified correctly.
+     */
+    public void deleteProject(String projectName) {
+        deleteProject(new DeleteProjectRequest(projectName));
+    }
+
+    /**
+     * Delete a project and all its topics and data.
+     *
+     * @param request
+     *        Represents the input for <a>DeleteProject</a>.
+     * @throws ResourceNotFoundException
+     *         The requested resource could not be found. The project might not
+     *         be specified correctly.
+     */
+    public void deleteProject(DeleteProjectRequest request) {
+        DefaultRequest req = factory.getDeleteProjectRequestSer().serialize(request);
+
+        Response response = this.restClient.requestWithNoRetry(req);
+
+        factory.getDeleteProjectResultDeser().deserialize(request, response);
+    }
+
+    /**
      * Append field.
      *
      * @param request
@@ -988,6 +1055,385 @@ public class DatahubClient {
         Response response = this.restClient.requestWithNoRetry(req);
 
         return factory.getAppendFieldResultDeser().deserialize(request, response);
+    }
+
+    /**
+     * Get specific shard metering info.
+     *
+     * @param request
+     *        Represents the input for <code>getMeteringInfo</code>.
+     * @return Result of the getMeteringInfo operation returned by the service.
+     * @throws ResourceNotFoundException
+     *         The requested resource could not be found.
+     * @throws InvalidParameterException
+     *         The requested shard number is invalid.
+     */
+    public GetMeteringInfoResult getMeteringInfo(GetMeteringInfoRequest request) {
+        DefaultRequest req = factory.getGetMeteringInfoRequestSer().serialize(request);
+
+        Response response = this.restClient.requestWithNoRetry(req);
+
+        return factory.getGetMeteringInfoResultDeser().deserialize(request, response);
+    }
+
+    /**
+     * List your data connectors.
+     *
+     * @param projectName
+     *         The name of the project.
+     * @param topicName
+     *         The name of the topic.
+     * @return Result of the ListDataConnector operation returned by the service.
+     * @throws ResourceNotFoundException
+     *         The requested resource could not be found.
+     */
+    public ListDataConnectorResult listDataConnector(String projectName, String topicName) {
+        return listDataConnector(new ListDataConnectorRequest(projectName, topicName));
+    }
+
+    /**
+     * List your data connectors.
+     *
+     * @param request
+     *        Represents the input for <code>ListDataConnector</code>.
+     * @return Result of the ListConnector operation returned by the service.
+     * @throws ResourceNotFoundException
+     *         The requested resource could not be found.
+     */
+    public ListDataConnectorResult listDataConnector(ListDataConnectorRequest request) {
+        DefaultRequest req = factory.getListDataConnectorRequestSer().serialize(request);
+
+        Response response = this.restClient.requestWithNoRetry(req);
+
+        return factory.getListDataConnectorResultDeser().deserialize(request, response);
+    }
+
+    /**
+     * Create data connectors.
+     *
+     * @param projectName
+     *         The name of the project.
+     * @param topicName
+     *         The name of the topic.
+     * @param connectorType
+     *         The type of connector.
+     * @param columnFields
+     *         The list of the columnFields.
+     * @param config
+     *         The config map of the connector.
+     * @return Result of the CreateDataConnector operation returned by the service.
+     * @throws ResourceNotFoundException
+     *         The requested resource could not be found.
+     * @throws ResourceExistException
+     *         The project is already created.
+     */
+    public CreateDataConnectorResult createDataConnector(String projectName, String topicName,
+                                                 ConnectorType connectorType, List<String> columnFields, ConnectorConfig config) {
+        return createDataConnector(new CreateDataConnectorRequest(projectName, topicName, connectorType, columnFields, config));
+    }
+
+    public CreateDataConnectorResult createDataConnector(String projectName, String topicName,
+                                                         ConnectorType connectorType, ConnectorConfig config) {
+        return createDataConnector(new CreateDataConnectorRequest(projectName, topicName, connectorType, config));
+    }
+
+    /**
+     * Create data connectors.
+     *
+     * @param request
+     *        Represents the input for <code>CreateDataConnector</code>.
+     * @return Result of the CreateDataConnector operation returned by the service.
+     * @throws ResourceNotFoundException
+     *         The requested resource could not be found.
+     * @throws ResourceExistException
+     *         The project is already created.
+     */
+    public CreateDataConnectorResult createDataConnector(CreateDataConnectorRequest request) {
+        DefaultRequest req = factory.getCreateDataConnectorRequestSer().serialize(request);
+
+        Response response = this.restClient.requestWithNoRetry(req);
+
+        return factory.getCreateDataConnectorResultDeser().deserialize(request, response);
+    }
+
+    /**
+     * Get data connectors.
+     *
+     * @param projectName
+     *         The name of the project.
+     * @param topicName
+     *         The name of the topic.
+     * @param connectorType
+     *         The type of connector.
+     * @return Result of the GetDataConnector operation returned by the service.
+     * @throws ResourceNotFoundException
+     *         The requested resource could not be found.
+     */
+    public GetDataConnectorResult getDataConnector(String projectName, String topicName, ConnectorType connectorType) {
+        return getDataConnector(new GetDataConnectorRequest(projectName, topicName, connectorType));
+    }
+
+    /**
+     * Get your data connectors.
+     *
+     * @param request
+     *        Represents the input for <code>GetDataConnector</code>.
+     * @return Result of the GetDataConnector operation returned by the service.
+     * @throws ResourceNotFoundException
+     *         The requested resource could not be found.
+     */
+    public GetDataConnectorResult getDataConnector(GetDataConnectorRequest request) {
+        DefaultRequest req = factory.getGetDataConnectorRequestSer().serialize(request);
+
+        Response response = this.restClient.requestWithNoRetry(req);
+
+        return factory.getGetDataConnectorResultDeser().deserialize(request, response);
+    }
+
+    /**
+     * Delete data connectors.
+     *
+     * @param projectName
+     *         The name of the project.
+     * @param topicName
+     *         The name of the topic.
+     * @param connectorType
+     *         The type of the connector.
+     * @return Result of the DeleteConnector operation returned by the service.
+     * @throws ResourceNotFoundException
+     *         The requested resource could not be found.
+     */
+    public DeleteDataConnectorResult deleteDataConnector(String projectName, String topicName, ConnectorType connectorType) {
+        return deleteDataConnector(new DeleteDataConnectorRequest(projectName, topicName, connectorType));
+    }
+
+    /**
+     * Delete data connectors.
+     *
+     * @param request
+     *        Represents the input for <code>DeleteDataConnector</code>.
+     * @return Result of the DeleteDataConnector operation returned by the service.
+     * @throws ResourceNotFoundException
+     *         The requested resource could not be found.
+     */
+    public DeleteDataConnectorResult deleteDataConnector(DeleteDataConnectorRequest request) {
+        DefaultRequest req = factory.getDeleteDataConnectorRequestSer().serialize(request);
+
+        Response response = this.restClient.requestWithNoRetry(req);
+
+        return factory.getDeleteDataConnectorResultDeser().deserialize(request, response);
+    }
+
+    /**
+     * Reload data connectors.
+     *
+     * @param request
+     *        Represents the input for <code>ReloadDataConnector</code>.
+     * @return Result of the ReloadDataConnector operation returned by the service.
+     * @throws ResourceNotFoundException
+     *         The requested resource could not be found.
+     */
+    public ReloadDataConnectorResult reloadDataConnector(ReloadDataConnectorRequest request) {
+        DefaultRequest req = factory.getReloadDataConnectorRequestSer().serialize(request);
+
+        Response response = this.restClient.requestWithNoRetry(req);
+
+        return factory.getReloadDataConnectorResultDeser().deserialize(request, response);
+    }
+
+    /**
+     * Reload data connectors.
+     *
+     * @param projectName
+     *         The name of the project.
+     * @param topicName
+     *         The name of the topic.
+     * @param connectorType
+     *         The type of the connector.
+     * @param shardId
+     *         The shard id.
+     * @return Result of the ReloadDataConnector operation returned by the service.
+     * @throws ResourceNotFoundException
+     *         The requested resource could not be found.
+     */
+    public ReloadDataConnectorResult reloadDataConnector(String projectName, String topicName, ConnectorType connectorType, String shardId) {
+        return reloadDataConnector(new ReloadDataConnectorRequest(projectName, topicName, connectorType, shardId));
+    }
+
+    /**
+     * Reload all shard for data connectors.
+     *
+     * @param projectName
+     *         The name of the project.
+     * @param topicName
+     *         The name of the topic.
+     * @param connectorType
+     *         The type of the connector.
+     * @return Result of the ReloadDataConnector operation returned by the service.
+     * @throws ResourceNotFoundException
+     *         The requested resource could not be found.
+     */
+    public ReloadDataConnectorResult reloadDataConnector(String projectName, String topicName, ConnectorType connectorType) {
+        return reloadDataConnector(new ReloadDataConnectorRequest(projectName, topicName, connectorType));
+    }
+
+    /**
+     * Get data connector shard status.
+     *
+     * @param projectName
+     *         The name of the project.
+     * @param topicName
+     *         The name of the topic.
+     * @param connectorType
+     *         The type of the connector.
+     * @param shardId
+     *         The shard id.
+     * @return Result of the GetDataConnectorShardStatus operation returned by the service.
+     * @throws ResourceNotFoundException
+     *         The requested resource could not be found.
+     */
+    public GetDataConnectorShardStatusResult getDataConnectorShardStatus(String projectName, String topicName, ConnectorType connectorType, String shardId) {
+        return getDataConnectorShardStatus(new GetDataConnectorShardStatusRequest(projectName, topicName, connectorType, shardId));
+    }
+
+    /**
+     * Get data connector shard status.
+     *
+     * @param request
+     *        Represents the input for <code>GetDataConnectorShardStatus</code>.
+     * @return Result of the GetConnectorShardStatus operation returned by the service.
+     * @throws ResourceNotFoundException
+     *         The requested resource could not be found.
+     */
+    public GetDataConnectorShardStatusResult getDataConnectorShardStatus(GetDataConnectorShardStatusRequest request) {
+        DefaultRequest req = factory.getGetDataConnectorShardStatusRequestSer().serialize(request);
+
+        Response response = this.restClient.requestWithNoRetry(req);
+
+        return factory.getGetDataConnectorShardStatusResultDeser().deserialize(request, response);
+    }
+
+    /**
+     * Append data connector field.
+     *
+     * @param request
+     *        Represents the input for <code>appendDataConnectorField</code>.
+     * @return Result of the appendConnectorField operation returned by the service.
+     * @throws ResourceNotFoundException
+     *         The requested resource could not be found.
+     * @throws InvalidParameterException
+     *         The requested shard number is invalid.
+     */
+    public AppendDataConnectorFieldResult appendDataConnectorField(AppendDataConnectorFieldRequest request) {
+        DefaultRequest req = factory.getAppendDataConnectorFieldRequestSer().serialize(request);
+
+        Response response = this.restClient.requestWithNoRetry(req);
+
+        return factory.getAppendDataConnectorFieldResultDeser().deserialize(request, response);
+    }
+
+    /**
+     * Update subscription offsets
+     * @param project
+     *        The name of the project
+     * @param subId
+     *        The id of the subscription
+     * @param shardId
+     *        The shard id of the offset
+     * @param offset
+     *        offset value
+     * @return
+     *        Result returned by service
+     * @throws InvalidParameterException
+     *        Some of the parameters are invalid
+     * @throws InternalFailureException
+     *        The service encountered an error
+     */
+    public UpdateSubscriptionOffsetResult commitSubscriptionOffset(String project, String subId, String shardId, Offset offset) {
+        Map<String, Offset> offsets = new HashMap<String, Offset>();
+        offsets.put(shardId, offset);
+        return commitSubscriptionOffset(new CommitSubscriptionOffsetRequest(project, subId, offsets));
+    }
+
+    /**
+     * Update subscription offsets
+     * @param project
+     *        The name of the project
+     * @param subId
+     *        The id of the subscription
+     * @param offsets
+     *        offset map, key - shard id, value - offset value
+     * @return
+     *        Result returned by service
+     * @throws InvalidParameterException
+     *        Some of the parameters are invalid
+     * @throws InternalFailureException
+     *        The service encountered an error
+     */
+    public UpdateSubscriptionOffsetResult commitSubscriptionOffset(String project, String subId, Map<String, Offset> offsets) {
+        return commitSubscriptionOffset(new CommitSubscriptionOffsetRequest(project, subId, offsets));
+    }
+
+    /**
+     * Update subscription offset
+     * @param request
+     *        Request with project name, sub id, offset list
+     * @return
+     *        Result returned by service
+     * @throws InvalidParameterException
+     *        Some of the parameters are invalid
+     * @throws InternalFailureException
+     *        The service encountered an error
+     */
+    public UpdateSubscriptionOffsetResult commitSubscriptionOffset(CommitSubscriptionOffsetRequest request) {
+        DefaultRequest req = factory.getUpdateSubscriptionOffsetRequestSer().serialize(request);
+
+        Response response = this.restClient.requestWithNoRetry(req);
+
+        return factory.getUpdateSubscriptionOffsetResultDeser().deserialize(request, response);
+    }
+
+    /**
+     * Get subscription offset list by subscription id
+     * @param project
+     *        Project name
+     * @param subId
+     *        Subscription id
+     * @return
+     *        Result returned by service with a list of offsets
+     * @throws InvalidParameterException
+     *        Some of the parameters are invalid
+     * @throws InternalFailureException
+     *        The service encountered an error
+     */
+    public GetSubscriptionOffsetResult getSubscriptionOffset(String project, String subId) {
+        return getSubscriptionOffset(new GetSubscriptionOffsetRequest(project, subId));
+    }
+
+    /**
+     * Get subscription offset list by subscription id
+     * @param request
+     *        Request with project name, sub id
+     * @return
+     *        Result returned by service with a list of offsets
+     * @throws InvalidParameterException
+     *        Some of the parameters are invalid
+     * @throws InternalFailureException
+     *        The service encountered an error
+     */
+    public GetSubscriptionOffsetResult getSubscriptionOffset(GetSubscriptionOffsetRequest request) {
+        DefaultRequest req = factory.getGetSubscriptionOffsetsRequestSer().serialize(request);
+
+        Response response = this.restClient.requestWithNoRetry(req);
+
+        return factory.getGetSubscriptionOffsetResultDeser().deserialize(request, response);
+    }
+
+    /**
+     * clear resources (connection pool)
+     */
+    public void close() {
+        restClient.close();
     }
 
     private boolean isShardLoadCompleted(String projectName, String topicName) {

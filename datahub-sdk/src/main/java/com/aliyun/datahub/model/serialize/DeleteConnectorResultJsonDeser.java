@@ -5,7 +5,7 @@ import com.aliyun.datahub.exception.DatahubServiceException;
 import com.aliyun.datahub.model.DeleteConnectorRequest;
 import com.aliyun.datahub.model.DeleteConnectorResult;
 
-
+@Deprecated
 public class DeleteConnectorResultJsonDeser implements Deserializer<DeleteConnectorResult,DeleteConnectorRequest,Response> {
     @Override
     public DeleteConnectorResult deserialize(DeleteConnectorRequest request, Response response) throws DatahubServiceException {

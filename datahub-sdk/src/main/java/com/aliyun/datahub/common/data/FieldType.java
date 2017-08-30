@@ -26,7 +26,12 @@ public enum FieldType {
     /**
      * 字符串类型
      */
-    STRING;
+    STRING,
+
+    /**
+     * 精度类型
+     */
+    DECIMAL;
 
     public static String getFullTypeString(FieldType type, List<FieldType> genericTypeList) {
         StringBuilder sb = new StringBuilder();

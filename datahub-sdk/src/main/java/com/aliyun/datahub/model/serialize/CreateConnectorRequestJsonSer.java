@@ -10,7 +10,7 @@ import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.ObjectNode;
 
 import java.io.IOException;
-
+@Deprecated
 public class CreateConnectorRequestJsonSer implements Serializer<DefaultRequest, CreateConnectorRequest> {
     @Override
     public DefaultRequest serialize(CreateConnectorRequest request) throws DatahubClientException {
@@ -36,7 +36,9 @@ public class CreateConnectorRequestJsonSer implements Serializer<DefaultRequest,
         odpsDesc.put("Project", request.getOdpsDesc().getProject());
         odpsDesc.put("Table", request.getOdpsDesc().getTable());
         odpsDesc.put("OdpsEndpoint", request.getOdpsDesc().getOdpsEndpoint());
-        odpsDesc.put("TunnelEndpoint", request.getOdpsDesc().getTunnelEndpoint());
+        if (request.getOdpsDesc().getTunnelEndpoint() != null) {
+            odpsDesc.put("TunnelEndpoint", request.getOdpsDesc().getTunnelEndpoint());
+        }
         odpsDesc.put("AccessId", request.getOdpsDesc().getAccessId());
         odpsDesc.put("AccessKey", request.getOdpsDesc().getAccessKey());
         node.put("Config", odpsDesc);
