@@ -7,5 +7,6 @@ public enum ConnectorType {
     SINK_ES,
     SINK_ADS,
     SINK_MYSQL,
-    SINK_FC
+    SINK_FC,
+    SINK_OTS
 }

@@ -7,6 +7,7 @@ public class GetDataConnectorShardStatusResult {
     private long updateTime;
     private ConnectorShardStatus state;
     private String lastErrorMessage;
+    private long discardCount;
 
     public long getStartSequence() {
         return startSequence;
@@ -60,4 +61,11 @@ public class GetDataConnectorShardStatusResult {
         this.lastErrorMessage = lastErrorMessage;
     }
 
+    public long getDiscardCount() {
+        return discardCount;
+    }
+
+    public void setDiscardCount(long discardCount) {
+        this.discardCount = discardCount;
+    }
 }

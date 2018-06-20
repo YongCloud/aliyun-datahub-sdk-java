@@ -76,7 +76,7 @@ public class SinkESTest {
 
       index = String.format("dh_test_index_%s", hint);
       esDesc = new ElasticSearchDesc();
-      esDesc.setEndpoint("http://" + DatahubTestUtils.getESEndpoint() + ":" + DatahubTestUtils.getESPort());
+      esDesc.setEndpoint("http://" + DatahubTestUtils.getESEndpoint());
       esDesc.setIndex(index);
       esDesc.setUser(DatahubTestUtils.getESUser());
       esDesc.setPassword(DatahubTestUtils.getESPassword());
@@ -780,6 +780,67 @@ public class SinkESTest {
     Assert.assertEquals(commit_count, total);
 
     //checkESData(schema, columnFields.size() - idFields.size() - typeFields.size());
+
+    client.deleteDataConnector(projectName, topicName, connectoType);
+
+    listDataConnectorResult = client.listDataConnector(projectName, topicName);
+    connectors = listDataConnectorResult.getDataConnectors();
+    Assert.assertFalse(connectors.contains(connectoType.toString().toLowerCase()));
+  }
+
+  @Test(enabled = false)
+  public void testSinkESConnectorNormalWithCommitSize() {
+    RecordSchema schema = new RecordSchema();
+    schema.addField(new Field("f1", FieldType.STRING));
+    schema.addField(new Field("f2", FieldType.BIGINT));
+    schema.addField(new Field("f3", FieldType.DOUBLE));
+    schema.addField(new Field("f4", FieldType.TIMESTAMP));
+    schema.addField(new Field("f5", FieldType.BOOLEAN));
+    schema.addField(new Field("id", FieldType.STRING));
+    schema.addField(new Field("type", FieldType.STRING));
+    CreateTopic(schema);
+
+    List<String> columnFields = new ArrayList<String>();
+    columnFields.add("f1");
+    columnFields.add("f2");
+    columnFields.add("f3");
+    columnFields.add("f4");
+    columnFields.add("f5");
+    columnFields.add("id");
+    columnFields.add("type");
+
+    List<String> idFields = new ArrayList<String>();
+    idFields.add("id");
+    List<String> typeFields = new ArrayList<String>();
+    typeFields.add("type");
+    esDesc.setIdFields(idFields);
+    esDesc.setTypeFields(typeFields);
+    esDesc.setMaxCommitSize(100L);
+    client.createDataConnector(projectName, topicName, connectoType, columnFields, esDesc);
+
+    ListDataConnectorResult listDataConnectorResult = client.listDataConnector(projectName, topicName);
+    List<String> connectors = listDataConnectorResult.getDataConnectors();
+    Assert.assertTrue(connectors.contains(connectoType.toString().toLowerCase()));
+
+    GetDataConnectorResult getDataConnectorResult = client.getDataConnector(projectName, topicName, connectoType);
+    Assert.assertEquals(getDataConnectorResult.getColumnFields(), columnFields);
+
+    putRecords(schema);
+    try {
+      Thread.sleep(sleepTime);
+    } catch (InterruptedException e) {
+
+    }
+    // check odps data
+    long total = shardCount*recordCount;
+    long commit_count = 0;
+    getDataConnectorResult = client.getDataConnector(projectName, topicName, connectoType);
+    for (ShardContext sc : getDataConnectorResult.getShardContexts()) {
+      commit_count += sc.getCurSequence();
+    }
+    Assert.assertEquals(commit_count, total);
+
+    checkESData(schema, columnFields.size() - idFields.size() - typeFields.size());
 
     client.deleteDataConnector(projectName, topicName, connectoType);
 

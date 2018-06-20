@@ -176,14 +176,14 @@ public class GetCursorTest {
         long timestamp = System.currentTimeMillis();
         GetCursorResult c = client.getCursor(projectName, topicName, "1", timestamp - 7 * 24 * 3600 * 1000);
         String cursor = c.getCursor();
-        Assert.assertEquals(cursor, "20000000000000000000000000000000");
+        Assert.assertEquals(cursor, "30000000000000000000000000000000");
     }
 
     @Test
     public void testGetCursorBySeqInEmpty() {
         GetCursorResult c = client.getCursor(projectName, topicName, "2", GetCursorRequest.CursorType.SEQUENCE, 0);
         String cursor = c.getCursor();
-        Assert.assertEquals(cursor, "20000000000000000000000000000000");
+        Assert.assertEquals(cursor, "30000000000000000000000000000000");
     }
 
     @Test
@@ -193,7 +193,7 @@ public class GetCursorTest {
         {
             GetCursorResult c = client.getCursor(projectName, topicName, "2", GetCursorRequest.CursorType.SEQUENCE, i);
             String cursor = c.getCursor();
-            Assert.assertEquals(cursor.codePointAt(30), i + '0');
+            Assert.assertEquals(cursor.codePointAt(27), i + '0');
         }
     }
 

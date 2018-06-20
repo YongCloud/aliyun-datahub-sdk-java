@@ -7,6 +7,7 @@ import com.aliyun.datahub.common.transport.Response;
 import com.aliyun.datahub.common.data.RecordSchema;
 import com.aliyun.datahub.exception.*;
 import com.aliyun.datahub.model.*;
+import com.aliyun.datahub.model.GetCursorRequest.CursorType;
 import com.aliyun.datahub.model.serialize.*;
 import com.aliyun.datahub.rest.RestClient;
 import com.aliyun.datahub.common.util.KeyRangeUtils;
@@ -698,7 +699,40 @@ public class DatahubClient {
         GetCursorRequest request = new GetCursorRequest(projectName, topicName, shardId, type, param);
         return getCursor(request);
     }
+    
+    /**
+     * Get next offset cursor.
+     *
+     * @param offsetCtx The Offset Context
+     * @return Result of the GetCursor operation returned by the service.
+     * @throws ResourceNotFoundException
+     *         The requested resource could not be found.
+     * @throws InvalidParameterException
+     *         A specified parameter exceeds its restrictions, is not supported,
+     *         or can't be used. For more information, see the returned message.
+     */
+    public GetCursorResult getNextOffsetCursor(OffsetContext offsetCtx) {
+    	GetCursorRequest request = new GetCursorRequest(offsetCtx.getProject(), offsetCtx.getTopic(), offsetCtx.getShardId(), CursorType.SEQUENCE,
+				(offsetCtx.getOffset().getSequence() + 1));
+    	return getCursor(request);
+    }
 
+    /**
+     * Get current offset cursor.
+     *
+     * @param offsetCtx The Offset Context
+     * @return Result of the GetCursor operation returned by the service.
+     * @throws ResourceNotFoundException
+     *         The requested resource could not be found.
+     * @throws InvalidParameterException
+     *         A specified parameter exceeds its restrictions, is not supported,
+     *         or can't be used. For more information, see the returned message.
+     */
+    public GetCursorResult getCurrentOffsetCursor(OffsetContext offsetCtx) {
+    	GetCursorRequest request = new GetCursorRequest(offsetCtx.getProject(), offsetCtx.getTopic(), offsetCtx.getShardId(), CursorType.SEQUENCE,
+				(offsetCtx.getOffset().getSequence()));
+    	return getCursor(request);
+    }
 
     /**
      * 
@@ -1191,6 +1225,24 @@ public class DatahubClient {
     }
 
     /**
+     * Get your data connectors doneTime.
+     *
+     * @param request
+     *        Represents the input for <code>GetDataConnectorDoneTime</code>.
+     * @return Result of the GetDataConnectorDoneTime operation returned by the service.
+     * @throws ResourceNotFoundException
+     *         The requested resource could not be found.
+     */
+    public GetDataConnectorDoneTimeResult getDataConnectorDoneTime(GetDataConnectorDoneTimeRequest request) {
+        DefaultRequest req = factory.getGetDataConnectorDoneTimeRequestSer().serialize(request);
+
+
+        Response response = this.restClient.requestWithNoRetry(req);
+
+        return factory.getGetDataConnectorDoneTimeResultDeser().deserialize(request, response);
+    }
+
+    /**
      * Delete data connectors.
      *
      * @param projectName
@@ -1330,6 +1382,130 @@ public class DatahubClient {
         Response response = this.restClient.requestWithNoRetry(req);
 
         return factory.getAppendDataConnectorFieldResultDeser().deserialize(request, response);
+    }
+    
+    /**
+     * Initial Offset Context
+     * 
+     * @param project
+     *        The name of the project
+     * @param topic
+     *        The name of the topic
+     * @param subId
+     *        The id of the subscription
+     * @param shardIds
+     *        The set of shard ids
+     * @return
+     *        Result returned by service
+     * @throws InvalidParameterException
+     *        Some of the parameters are invalid
+     * @throws InternalFailureException
+     *        The service encountered an error
+     */
+    public InitOffsetContextResult initOffsetContext(String project, String topic, String subId, Set<String> shardIds) {
+    	return initOffsetContext(new InitOffsetContextRequest(project, topic, subId, shardIds));
+    }
+    
+    /**
+     * Initial Offset Context 
+     * 
+     * @param project
+     *        The name of the project
+     * @param topic
+     *        The name of the topic
+     * @param subId
+     *        The id of the subscription
+     * @param shardId
+     *        The set of shard id
+     * @return
+     *        Result returned by service
+     * @throws InvalidParameterException
+     *        Some of the parameters are invalid
+     * @throws InternalFailureException
+     *        The service encountered an error
+     */    
+    public OffsetContext initOffsetContext(String project, String topic, String subId, String shardId) {
+    	Set<String> shardIds = new HashSet<String>();
+    	shardIds.add(shardId);
+    	InitOffsetContextResult result = initOffsetContext(new InitOffsetContextRequest(project, topic, subId, shardIds));
+    	return result.getOffsets().get(shardId);
+    }
+    
+    /**
+     * Initial Offset Context
+     * 
+     * @param request
+     * @return
+     *        Result returned by service
+     * @throws InvalidParameterException
+     *        Some of the parameters are invalid
+     * @throws InternalFailureException
+     *        The service encountered an error
+     */
+    public InitOffsetContextResult initOffsetContext(InitOffsetContextRequest request) {
+        DefaultRequest req = factory.getInitOffsetContextRequestSer().serialize(request);
+        
+        Response response = this.restClient.requestWithNoRetry(req);
+        
+        return factory.getInitOffsetContextResultDerser().deserialize(request, response);
+    }
+    
+    /**
+     * Update offset context
+     * 
+     * @param offsetCtx
+     *        The current offset context
+     *
+     */
+    public void updateOffsetContext(OffsetContext offsetCtx) {
+    	Set<String> shardIds = new HashSet<String>();
+    	shardIds.add(offsetCtx.getShardId());
+    	GetOffsetRequest request = new GetOffsetRequest(offsetCtx.getProject(), offsetCtx.getTopic(), offsetCtx.getSubId(), shardIds);
+        DefaultRequest req = factory.getGetOffsetRequestSer().serialize(request);
+        Response response = this.restClient.requestWithNoRetry(req);
+        GetOffsetResult result = factory.getGetOffsetResultDeser().deserialize(request, response);
+    	offsetCtx.setOffset(result.getOffsets().get(offsetCtx.getShardId()));
+    	offsetCtx.setVersion(result.getVersions().get(offsetCtx.getShardId()));
+    }
+    
+    /**
+     * Commit offset
+     * @param offsetCtx
+     *        offset context
+     * @return
+     *        Result returned by service
+     * @throws InvalidParameterException
+     *        Some of the parameters are invalid
+     * @throws InternalFailureException
+     *        The service encountered an error
+     */
+    public CommitOffsetResult commitOffset(OffsetContext offsetCtx) {
+    	Map<String, OffsetContext> offsetCtxMap = new HashMap<String, OffsetContext>();
+    	offsetCtxMap.put(offsetCtx.getShardId(), offsetCtx);
+        return commitOffset(new CommitOffsetRequest(offsetCtxMap));
+    }
+    
+    public CommitOffsetResult commitOffset(Map<String, OffsetContext> offsetCtxMap) {
+    	return commitOffset(new CommitOffsetRequest(offsetCtxMap));
+    }
+
+    /**
+     * Commit subscription offset
+     * @param request
+     *        Request with project name, sub id, offset list
+     * @return
+     *        Result returned by service
+     * @throws InvalidParameterException
+     *        Some of the parameters are invalid
+     * @throws InternalFailureException
+     *        The service encountered an error
+     */
+    public CommitOffsetResult commitOffset(CommitOffsetRequest request) {
+        DefaultRequest req = factory.getCommitOffsetRequestSer().serialize(request);
+
+        Response response = this.restClient.requestWithNoRetry(req);
+
+        return factory.getCommitOffsetResultDeser().deserialize(request, response);
     }
 
     /**

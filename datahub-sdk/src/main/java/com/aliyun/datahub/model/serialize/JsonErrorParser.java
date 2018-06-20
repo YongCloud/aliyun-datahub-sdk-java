@@ -50,8 +50,18 @@ public class JsonErrorParser implements ErrorParser{
                     ex = new LimitExceededException(tree.get("ErrorMessage").asText());
                 } else if (er.equals("OdpsServiceError")) {
                     ex = new OdpsException(tree.get("ErrorMessage").asText());
+                } else if (er.equals("MysqlServiceError")) {
+                    ex = new MysqlException(tree.get("ErrorMessage").asText());
                 } else if (er.equals("InternalServerError")) {
                     ex = new InternalFailureException(tree.get("ErrorMessage").asText());
+                } else if (er.equals("SubscriptionOffline")) {
+                	ex = new SubscriptionOfflineException(tree.get("ErrorMessage").asText());
+                } else if (er.equals("OffsetReseted")) {
+                	ex = new OffsetResetedException(tree.get("ErrorMessage").asText());
+                } else if (er.equals("OffsetSessionClosed")) {
+                	ex = new OffsetSessionClosedException(tree.get("ErrorMessage").asText());
+                } else if (er.equals("OffsetSessionChanged")) {
+                	ex = new OffsetSessionChangedException(tree.get("ErrorMessage").asText());
                 } else {
                     ex = new DatahubServiceException(tree.get("ErrorMessage").asText());
                 }

@@ -395,13 +395,13 @@ public class JsonSerializerFactory implements SerializerFactory {
     }
 
     @Override
-    public Serializer<DefaultRequest, GetSubscriptionOffsetRequest> getGetSubscriptionOffsetsRequestSer() throws DatahubClientException {
-        return GetSubscriptionOffsetRequestJsonSer.getInstance();
+    public Serializer<DefaultRequest, GetOffsetRequest> getGetOffsetRequestSer() throws DatahubClientException {
+        return GetOffsetRequestJsonSer.getInstance();
     }
 
     @Override
-    public Deserializer<GetSubscriptionOffsetResult, GetSubscriptionOffsetRequest, Response> getGetSubscriptionOffsetResultDeser() throws DatahubClientException {
-        return GetSubscriptionOffsetResultJsonDeser.getInstance();
+    public Deserializer<GetOffsetResult, GetOffsetRequest, Response> getGetOffsetResultDeser() throws DatahubClientException {
+        return GetOffsetResultJsonDeser.getInstance();
     }
 
     @Override
@@ -425,13 +425,13 @@ public class JsonSerializerFactory implements SerializerFactory {
     }
 
     @Override
-    public Serializer<DefaultRequest, CommitSubscriptionOffsetRequest> getUpdateSubscriptionOffsetRequestSer() throws DatahubClientException {
-        return CommitSubscriptionOffsetRequestJsonSer.getInstance();
+    public Serializer<DefaultRequest, CommitOffsetRequest> getCommitOffsetRequestSer() throws DatahubClientException {
+        return CommitOffsetRequestJsonSer.getInstance();
     }
 
     @Override
-    public Deserializer<UpdateSubscriptionOffsetResult, CommitSubscriptionOffsetRequest, Response> getUpdateSubscriptionOffsetResultDeser() throws DatahubClientException {
-        return CommitSubscriptionOffsetResultJsonDeser.getInstance();
+    public Deserializer<CommitOffsetResult, CommitOffsetRequest, Response> getCommitOffsetResultDeser() throws DatahubClientException {
+        return CommitOffsetResultJsonDeser.getInstance();
     }
 
     @Override
@@ -442,6 +442,16 @@ public class JsonSerializerFactory implements SerializerFactory {
     @Override
     public Deserializer<UpdateSubscriptionResult, UpdateSubscriptionRequest, Response> getUpdateSubscriptionResultDerser() throws DatahubClientException {
         return UpdateSubscriptionResultJsonDeser.getInstance();
+    }
+
+    @Override
+    public Serializer<DefaultRequest, GetDataConnectorDoneTimeRequest> getGetDataConnectorDoneTimeRequestSer() throws DatahubClientException {
+        return GetDataConnectorDoneTimeRequestJsonSer.getInstance();
+    }
+
+    @Override
+    public Deserializer<GetDataConnectorDoneTimeResult, GetDataConnectorDoneTimeRequest, Response> getGetDataConnectorDoneTimeResultDeser() throws DatahubClientException {
+        return GetDataConnectorDoneTimeResultJsonDeser.getInstance();
     }
 
     private JsonSerializerFactory() {
@@ -455,4 +465,40 @@ public class JsonSerializerFactory implements SerializerFactory {
         }
         return instance;
     }
+
+	@Override
+	public Serializer<DefaultRequest, UpdateSubscriptionStateRequest> getUpdateSubscriptionStateRequestSer()
+			throws DatahubClientException {
+		return UpdateSubscriptionStateRequestJsonSer.getInstance();
+	}
+
+	@Override
+	public Deserializer<UpdateSubscriptionResult, UpdateSubscriptionStateRequest, Response> getUpdateSubscriptionStateResultDerser()
+			throws DatahubClientException {
+		return UpdateSubscriptionStateResultJsonDeser.getInstance();
+	}
+
+	@Override
+	public Serializer<DefaultRequest, InitOffsetContextRequest> getInitOffsetContextRequestSer()
+			throws DatahubClientException {
+		return InitOffsetContextRequestJsonSer.getInstance();
+	}
+
+	@Override
+	public Deserializer<InitOffsetContextResult, InitOffsetContextRequest, Response> getInitOffsetContextResultDerser()
+			throws DatahubClientException {
+		return InitOffsetContextResultJsonDeser.getInstance();
+	}
+
+	@Override
+	public Serializer<DefaultRequest, ResetOffsetRequest> getResetOffsetRequestSer()
+			throws DatahubClientException {
+		return ResetOffsetRequestJsonSer.getInstance();
+	}
+
+	@Override
+	public Deserializer<CommitOffsetResult, ResetOffsetRequest, Response> getResetOffsetResultDeser()
+			throws DatahubClientException {
+		return ResetOffsetResultJsonDeser.getInstance();
+	}
 }

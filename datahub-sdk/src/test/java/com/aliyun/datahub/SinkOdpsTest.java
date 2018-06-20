@@ -36,7 +36,7 @@ public class SinkOdpsTest {
   private int lifeCycle = 7;
   private long recordCount = 20;
   private long timestamp = System.currentTimeMillis() * 1000;
-  private long shipperWaitTime = 1000*45;
+  private long shipperWaitTime = 1000*60;
 
   //Odps
   private Odps odps = null;
@@ -45,13 +45,13 @@ public class SinkOdpsTest {
   private String odpsTable = null;
   private String odpsEndpoint = DatahubTestUtils.getOdpsEndpoint();
   private String tunnelEndpoint = DatahubTestUtils.getOdpsTunnelEndpoint();
-  private String accessId = DatahubTestUtils.getSecondAccessId();
-  private String accessKey = DatahubTestUtils.getSecondAccesskey();
+  private String accessId = DatahubTestUtils.getAccessId();
+  private String accessKey = DatahubTestUtils.getAccessKey();
 
   @BeforeMethod
   public void SetUp() {
     try {
-      Account account = new AliyunAccount(DatahubTestUtils.getSecondAccessId(), DatahubTestUtils.getSecondAccesskey());
+      Account account = new AliyunAccount(DatahubTestUtils.getAccessId(), DatahubTestUtils.getAccessKey());
       odps = new Odps(account);
       odps.setDefaultProject(odpsProject);
       odps.setEndpoint(odpsEndpoint);
@@ -1976,11 +1976,11 @@ public class SinkOdpsTest {
       odpsSchema.addColumn(new Column("f1", OdpsType.STRING));
       CreateTable(odpsSchema);
 
-      odpsDesc.setAccessId(DatahubTestUtils.getAccessId());
-      odpsDesc.setAccessKey(DatahubTestUtils.getAccessKey());
+      odpsDesc.setAccessId(DatahubTestUtils.getSecondAccessId());
+      odpsDesc.setAccessKey(DatahubTestUtils.getSecondAccesskey());
 
       com.aliyun.odps.security.SecurityManager sm = odps.projects().get().getSecurityManager();
-      sm.runQuery("REVOKE CreateInstance ON PROJECT " + odpsProject + " from user " + DatahubTestUtils.getDefaultUser(), false);
+      sm.runQuery("REVOKE CreateInstance ON PROJECT " + odpsProject + " from user " + DatahubTestUtils.getSecondUser(), false);
       try {
         client.createDataConnector(projectName, topicName, connectoType, columnFields, odpsDesc);
         Assert.assertTrue(false);
@@ -1988,7 +1988,7 @@ public class SinkOdpsTest {
         Assert.assertEquals(e.getMessage().contains("You have no CreateInstance permission"), true);
       }
 
-      sm.runQuery("grant CreateInstance on project " + odpsProject + " to user " + DatahubTestUtils.getDefaultUser(), false);
+      sm.runQuery("grant CreateInstance on project " + odpsProject + " to user " + DatahubTestUtils.getSecondUser(), false);
       try {
         client.createDataConnector(projectName, topicName, connectoType, columnFields, odpsDesc);
         Assert.assertTrue(false);
@@ -1996,14 +1996,14 @@ public class SinkOdpsTest {
         Assert.assertEquals(e.getMessage().contains("You have no Update permission"), true);
       }
 
-      sm.runQuery("grant Update on table " + odpsTable + " to user " + DatahubTestUtils.getDefaultUser(), false);
+      sm.runQuery("grant Update on table " + odpsTable + " to user " + DatahubTestUtils.getSecondUser(), false);
       try {
         client.createDataConnector(projectName, topicName, connectoType, columnFields, odpsDesc);
         Assert.assertTrue(false);
       } catch (com.aliyun.datahub.exception.OdpsException e) {
         Assert.assertEquals(e.getMessage().contains("You have no Alter permission"), true);
       }
-      sm.runQuery("grant Alter on table " + odpsTable + " to user " + DatahubTestUtils.getDefaultUser(), false);
+      sm.runQuery("grant Alter on table " + odpsTable + " to user " + DatahubTestUtils.getSecondUser(), false);
 
       try {
         client.createDataConnector(projectName, topicName, connectoType, columnFields, odpsDesc);
@@ -2011,7 +2011,7 @@ public class SinkOdpsTest {
       } catch (com.aliyun.datahub.exception.OdpsException e) {
         Assert.assertEquals(e.getMessage().contains("You have no Describe permission"), true);
       }
-      sm.runQuery("grant Describe on table " + odpsTable + " to user " + DatahubTestUtils.getDefaultUser(), false);
+      sm.runQuery("grant Describe on table " + odpsTable + " to user " + DatahubTestUtils.getSecondUser(), false);
       client.createDataConnector(projectName, topicName, connectoType, columnFields, odpsDesc);
     } catch (com.aliyun.odps.OdpsException e) {
       e.printStackTrace();
@@ -2037,7 +2037,7 @@ public class SinkOdpsTest {
     int timeRange = 60;
     odpsDesc.setPartitionMode(OdpsDesc.PartitionMode.SYSTEM_TIME);
     odpsDesc.setTimeRange(timeRange);
-    Map<String, String> partitionConfig = new HashMap<String, String>();
+    Map<String, String> partitionConfig = new LinkedHashMap<String, String>();
     partitionConfig.put("pt", "%Y%m%d");
     partitionConfig.put("ct", "%H%M");
     odpsDesc.setPartitionConfig(partitionConfig);
@@ -2399,5 +2399,161 @@ public class SinkOdpsTest {
     }
     client.deleteDataConnector(projectName, topicName, connectoType);
     client.deleteTopic(projectName, topicName);
+  }
+
+  @Test
+  public void testMarkDoneSystemTime() {
+    List<String> columnFields = new ArrayList<String>();
+    columnFields.add("f1");
+
+    RecordSchema schema = new RecordSchema();
+    schema.addField(new Field("f1", FieldType.STRING));
+    CreateTopic(schema);
+
+    TableSchema odpsSchema = new TableSchema();
+    odpsSchema.addColumn(new Column("f1", OdpsType.STRING));
+    odpsSchema.addPartitionColumn(new Column("pt", OdpsType.STRING));
+    odpsSchema.addPartitionColumn(new Column("ct", OdpsType.STRING));
+    CreateTable(odpsSchema);
+
+    int timeRange = 60;
+    odpsDesc.setPartitionMode(OdpsDesc.PartitionMode.SYSTEM_TIME);
+    odpsDesc.setTimeRange(timeRange);
+    Map<String, String> partitionConfig = new HashMap<String, String>();
+    partitionConfig.put("pt", "%Y%m%d");
+    partitionConfig.put("ct", "%H%M");
+    odpsDesc.setPartitionConfig(partitionConfig);
+    client.createDataConnector(projectName, topicName, connectoType, columnFields, odpsDesc);
+
+    GetDataConnectorResult getDataConnectorResult = client.getDataConnector(projectName, topicName, connectoType);
+    Assert.assertEquals(getDataConnectorResult.getColumnFields(), columnFields);
+
+    Assert.assertEquals(client.getDataConnectorDoneTime(
+        new GetDataConnectorDoneTimeRequest(projectName, topicName, connectoType)).getDoneTime().longValue(), 0L);
+
+    long currentTime = System.currentTimeMillis()/1000;
+    putRecords(schema);
+    try {
+      Thread.sleep(shipperWaitTime);
+    } catch (InterruptedException e) {
+
+    }
+    long doneTime = client.getDataConnectorDoneTime(
+        new GetDataConnectorDoneTimeRequest(projectName, topicName, connectoType)).getDoneTime().longValue();
+    Assert.assertTrue(doneTime > currentTime - 1 && doneTime < currentTime + 1);
+
+    putRecords(schema);
+    doneTime = client.getDataConnectorDoneTime(
+        new GetDataConnectorDoneTimeRequest(projectName, topicName, connectoType)).getDoneTime().longValue();
+    Assert.assertTrue(doneTime > currentTime - 1 && doneTime < currentTime + 1);
+    currentTime = System.currentTimeMillis()/1000;
+    try {
+      Thread.sleep(shipperWaitTime);
+    } catch (InterruptedException e) {
+
+    }
+    doneTime = client.getDataConnectorDoneTime(
+        new GetDataConnectorDoneTimeRequest(projectName, topicName, connectoType)).getDoneTime().longValue();
+    Assert.assertTrue(doneTime > currentTime - 1 && doneTime < currentTime + 1);
+
+    client.deleteDataConnector(projectName, topicName, connectoType);
+  }
+
+  @Test
+  public void testMarkDoneEventTime() {
+    List<String> columnFields = new ArrayList<String>();
+    columnFields.add("f1");
+
+    RecordSchema schema = new RecordSchema();
+    schema.addField(new Field("f1", FieldType.STRING));
+    schema.addField(new Field("event_time", FieldType.TIMESTAMP));
+    CreateTopic(schema);
+
+    TableSchema odpsSchema = new TableSchema();
+    odpsSchema.addColumn(new Column("f1", OdpsType.STRING));
+    odpsSchema.addPartitionColumn(new Column("dt", OdpsType.STRING));
+    odpsSchema.addPartitionColumn(new Column("hh", OdpsType.STRING));
+    odpsSchema.addPartitionColumn(new Column("mm", OdpsType.STRING));
+    CreateTable(odpsSchema);
+
+    int timeRange = 60;
+    odpsDesc.setPartitionMode(OdpsDesc.PartitionMode.EVENT_TIME);
+    odpsDesc.setTimeRange(timeRange);
+    Map<String, String> partitionConfig = new LinkedHashMap<String, String>();
+    partitionConfig.put("dt", "%Y%m%d");
+    partitionConfig.put("hh", "%H");
+    partitionConfig.put("mm", "%M");
+    odpsDesc.setPartitionConfig(partitionConfig);
+    client.createDataConnector(projectName, topicName, connectoType, columnFields, odpsDesc);
+
+    Random rand = new Random();
+    long eventTime = System.currentTimeMillis()/1000 + rand.nextInt(900);
+    putRecordsWithEventTime(schema, eventTime*1000*1000);
+    try {
+      Thread.sleep(shipperWaitTime);
+    } catch (InterruptedException e) {
+
+    }
+    long doneTime = client.getDataConnectorDoneTime(
+        new GetDataConnectorDoneTimeRequest(projectName, topicName, connectoType)).getDoneTime().longValue();
+    Assert.assertEquals(doneTime, eventTime - eventTime%15 + 15);
+  }
+
+  @Test
+  public void testSinkOdpsGetDiscardCount() {
+    List<String> columnFields = new ArrayList<String>();
+    columnFields.add("f1");
+    columnFields.add("pt");
+
+    RecordSchema schema = new RecordSchema();
+    schema.addField(new Field("f1", FieldType.STRING));
+    schema.addField(new Field("pt", FieldType.STRING));
+    CreateTopic(schema);
+
+    TableSchema odpsSchema = new TableSchema();
+    odpsSchema.addColumn(new Column("f1", OdpsType.STRING));
+    odpsSchema.addPartitionColumn(new Column("pt", OdpsType.STRING));
+    CreateTable(odpsSchema);
+
+    client.createDataConnector(projectName, topicName, connectoType, columnFields, odpsDesc);
+
+    ListShardResult shards = client.listShard(projectName, topicName);
+    for (ShardEntry shard : shards.getShards()) {
+      List<RecordEntry> recordEntries = new ArrayList<RecordEntry>();
+      for (long n = 0; n < recordCount; n++) {
+        //RecordData
+        RecordEntry entry = new RecordEntry(schema);
+
+        entry.setString("f1", "test1");
+        if (n < 10) {
+          // pt == null
+          //entry.setString("pt", "pt");
+        } else {
+          entry.setString("pt", "pt");
+        }
+        entry.setShardId(shard.getShardId());
+
+        recordEntries.add(entry);
+      }
+      PutRecordsResult result = client.putRecords(projectName, topicName, recordEntries);
+      if (result.getFailedRecordCount() != 0) {
+        System.out.println(result.getFailedRecordError().get(0).getMessage());
+      }
+      Assert.assertEquals(result.getFailedRecordCount(), 0);
+    }
+
+    try {
+      Thread.sleep(shipperWaitTime);
+    } catch (InterruptedException e) {
+
+    }
+    for (ShardEntry shard : shards.getShards()) {
+      GetDataConnectorShardStatusResult getDataConnectorShardStatusResult =
+          client.getDataConnectorShardStatus(projectName, topicName, connectoType, shard.getShardId());
+      Assert.assertEquals(getDataConnectorShardStatusResult.getDiscardCount(), 10);
+
+    }
+
+    client.deleteDataConnector(projectName, topicName, connectoType);
   }
 }

@@ -45,5 +45,7 @@ public interface DatahubConstants {
     public static String StartSequence = "StartSequence";
     public static String EndSequence = "EndSequence";
     public static String MAX_SHARD_ID = String.valueOf(0xffffffffL);
+    public static String ExtendInc = "INC";
+    public static String ExtendTo = "TO";
 }
 

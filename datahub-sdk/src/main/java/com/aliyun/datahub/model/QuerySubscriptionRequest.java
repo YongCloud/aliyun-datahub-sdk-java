@@ -13,6 +13,10 @@ public class QuerySubscriptionRequest {
         if (project == null) {
             throw new InvalidParameterException("project name is null");
         }
+        
+        if (topic == null) {
+        	throw new InvalidParameterException("topic name is null");
+        }
 
         this.projectName = project;
         this.topicName = topic;

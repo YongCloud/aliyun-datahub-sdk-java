@@ -8,6 +8,7 @@ import com.aliyun.datahub.util.DatahubTestUtils;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import java.util.Date;
 import java.util.List;
 
 @Test
@@ -343,6 +344,75 @@ public class RecordEntryTest {
 
         entry.getAttributes().clear();
         Assert.assertNotEquals(entry.getAttributes().size(), 0);
+    }
+
+    @Test
+    public void testTimestamp() {
+        RecordSchema schema = DatahubTestUtils.createSchema("timestamp ms, timestamp us, timestamp date");
+        RecordEntry entry = new RecordEntry(schema);
+
+        long now = System.currentTimeMillis();
+        Date d = new Date(now);
+        long nowInUs = now * 1000;
+
+        entry.setTimeStampInMs(0, now);
+        entry.setTimeStampInUs(1, nowInUs);
+        entry.setTimeStampInDate(2, d);
+
+        Assert.assertEquals(entry.getTimeStampAsDate(0), d);
+        Assert.assertEquals(entry.getTimeStampAsDate(1), d);
+        Assert.assertEquals(entry.getTimeStampAsDate(2), d);
+        Assert.assertEquals(entry.getTimeStampAsMs(0).longValue(), now);
+        Assert.assertEquals(entry.getTimeStampAsMs(1).longValue(), now);
+        Assert.assertEquals(entry.getTimeStampAsMs(2).longValue(), now);
+        Assert.assertEquals(entry.getTimeStampAsUs(0).longValue(), nowInUs);
+        Assert.assertEquals(entry.getTimeStampAsUs(1).longValue(), nowInUs);
+        Assert.assertEquals(entry.getTimeStampAsUs(2).longValue(), nowInUs);
+
+        entry = new RecordEntry(schema);
+        entry.setTimeStampInMs(0, null);
+        entry.setTimeStampInUs(1, null);
+        entry.setTimeStampInDate(2, null);
+
+        Assert.assertNull(entry.getTimeStampAsDate(0));
+        Assert.assertNull(entry.getTimeStampAsDate(1));
+        Assert.assertNull(entry.getTimeStampAsDate(2));
+        Assert.assertNull(entry.getTimeStampAsMs(0));
+        Assert.assertNull(entry.getTimeStampAsMs(1));
+        Assert.assertNull(entry.getTimeStampAsMs(2));
+        Assert.assertNull(entry.getTimeStampAsUs(0));
+        Assert.assertNull(entry.getTimeStampAsUs(1));
+        Assert.assertNull(entry.getTimeStampAsUs(2));
+
+        entry = new RecordEntry(schema);
+        entry.setTimeStampInMs("ms", now);
+        entry.setTimeStampInUs("us", nowInUs);
+        entry.setTimeStampInDate("date", d);
+
+        Assert.assertEquals(entry.getTimeStampAsDate("ms"), d);
+        Assert.assertEquals(entry.getTimeStampAsDate("us"), d);
+        Assert.assertEquals(entry.getTimeStampAsDate("date"), d);
+        Assert.assertEquals(entry.getTimeStampAsMs("ms").longValue(), now);
+        Assert.assertEquals(entry.getTimeStampAsMs("us").longValue(), now);
+        Assert.assertEquals(entry.getTimeStampAsMs("date").longValue(), now);
+        Assert.assertEquals(entry.getTimeStampAsUs("ms").longValue(), nowInUs);
+        Assert.assertEquals(entry.getTimeStampAsUs("us").longValue(), nowInUs);
+        Assert.assertEquals(entry.getTimeStampAsUs("date").longValue(), nowInUs);
+
+        entry = new RecordEntry(schema);
+        entry.setTimeStampInMs("ms", null);
+        entry.setTimeStampInUs("us", null);
+        entry.setTimeStampInDate("date", null);
+
+        Assert.assertNull(entry.getTimeStampAsDate("ms"));
+        Assert.assertNull(entry.getTimeStampAsDate("us"));
+        Assert.assertNull(entry.getTimeStampAsDate("date"));
+        Assert.assertNull(entry.getTimeStampAsMs("ms"));
+        Assert.assertNull(entry.getTimeStampAsMs("us"));
+        Assert.assertNull(entry.getTimeStampAsMs("date"));
+        Assert.assertNull(entry.getTimeStampAsUs("ms"));
+        Assert.assertNull(entry.getTimeStampAsUs("us"));
+        Assert.assertNull(entry.getTimeStampAsUs("date"));
     }
 
     @Test

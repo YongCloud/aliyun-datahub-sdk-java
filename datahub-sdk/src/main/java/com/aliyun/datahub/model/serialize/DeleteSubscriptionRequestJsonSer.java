@@ -10,7 +10,7 @@ public class DeleteSubscriptionRequestJsonSer implements Serializer<DefaultReque
     public DefaultRequest serialize(DeleteSubscriptionRequest request) throws DatahubClientException {
         DefaultRequest req = new DefaultRequest();
         req.setHttpMethod(HttpMethod.DELETE);
-        req.setResource("/projects/" + request.getProjectName() + "/subscriptions/" + request.getSubId());
+        req.setResource("/projects/" + request.getProjectName() + "/topics/" + request.getTopicName() + "/subscriptions/" + request.getSubId());
         return req;
     }
 

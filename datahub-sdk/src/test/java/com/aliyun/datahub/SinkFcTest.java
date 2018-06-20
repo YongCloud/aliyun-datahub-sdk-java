@@ -59,6 +59,10 @@ public class SinkFcTest {
     @AfterMethod
     private void teardown() {
         try {
+            client.deleteDataConnector(projectName, topicName, ConnectorType.SINK_FC);
+        } catch (DatahubServiceException e) {
+        }
+        try {
             client.deleteTopic(projectName, topicName);
         } catch (DatahubServiceException e) {
         }

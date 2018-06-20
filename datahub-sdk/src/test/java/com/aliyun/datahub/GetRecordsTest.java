@@ -212,7 +212,7 @@ public class GetRecordsTest {
     public void testGetRecordsWithEmptyShardByC1C2C3C4() {
         RecordSchema schema = new RecordSchema();
         schema.addField(new Field("test", FieldType.STRING));
-        String validCursor = "20000000000000000000000000000000";
+        String validCursor = "30000000000000000000000000000000";
         GetRecordsResult r1 = client.getRecords(projectName, topicName, "1", validCursor, 10, schema);
         Assert.assertEquals(r1.getNextCursor(), validCursor);
     }
@@ -257,7 +257,7 @@ public class GetRecordsTest {
         RecordSchema schema = new RecordSchema();
         schema.addField(new Field("test", FieldType.STRING));
 
-        String c = new String("20000000000000000000000000000000");
+        String c = new String("30000000000000000000000000000000");
         GetRecordsResult r1 = client.getRecords("not_exist_project", topicName, "2", c, 10, schema);
     }
 
@@ -269,7 +269,7 @@ public class GetRecordsTest {
         RecordSchema schema = new RecordSchema();
         schema.addField(new Field("test", FieldType.STRING));
 
-        String c = new String("20000000000000000000000000000000");
+        String c = new String("30000000000000000000000000000000");
         GetRecordsResult r1 = client.getRecords(projectName, "not_eixts_topic", "2", c, 10, schema);
     }
 
@@ -281,7 +281,7 @@ public class GetRecordsTest {
         RecordSchema schema = new RecordSchema();
         schema.addField(new Field("test", FieldType.STRING));
 
-        String c = new String("20000000000000000000000000000000");
+        String c = new String("30000000000000000000000000000000");
         GetRecordsResult r1 = client.getRecords(projectName, topicName, "not_exist_shard", c, 10, schema);
     }
 
@@ -310,7 +310,7 @@ public class GetRecordsTest {
         PutRecordsResult result = topic.putRecords(recordEntries);
         Assert.assertEquals(0, result.getFailedRecordCount());
 
-        String c = new String("20000000000000000000000000000000");
+        String c = new String("30000000000000000000000000000000");
         GetRecordsResult records = topic.getRecords("0", c, 1);
         Assert.assertEquals(records.getRecords().get(0).getString(0), entry.getString(0));
         Assert.assertNull(records.getRecords().get(0).getBigint(1));

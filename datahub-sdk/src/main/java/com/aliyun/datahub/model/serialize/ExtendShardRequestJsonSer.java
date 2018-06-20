@@ -21,6 +21,9 @@ public class ExtendShardRequestJsonSer implements Serializer<DefaultRequest, Ext
         ObjectNode node = mapper.createObjectNode();
         node.put("Action", "extend");
         node.put("ShardNumber", request.getShardNumber());
+        if (request.getExtendMode() != null) {
+            node.put("ExtendMode", request.getExtendMode());
+        }
         try {
             req.setBody(mapper.writeValueAsString(node));
         } catch (IOException e) {

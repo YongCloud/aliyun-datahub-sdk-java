@@ -54,7 +54,10 @@ public class GetDataConnectorShardStatusResultJsonDeser implements Deserializer<
         if (node != null && !node.isNull()) {
             rs.setLastErrorMessage(node.asText());
         }
-
+        node = tree.get("DiscardCount");
+        if (node != null && !node.isNull()) {
+            rs.setDiscardCount(node.asLong());
+        }
         return rs;
     }
 

@@ -6,6 +6,7 @@ import com.aliyun.datahub.exception.DatahubServiceException;
 import com.aliyun.datahub.model.GetSubscriptionResult;
 import com.aliyun.datahub.model.QuerySubscriptionRequest;
 import com.aliyun.datahub.model.QuerySubscriptionResult;
+
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 
@@ -44,6 +45,8 @@ public class QuerySubscriptionResultJsonDeser implements Deserializer<QuerySubsc
             sub.setSubId(subNode.get("SubId").asText());
             sub.setTopicName(subNode.get("TopicName").asText());
             sub.setComment(subNode.get("Comment").asText());
+            sub.setType(subNode.get("Type").asInt());
+            sub.setState(subNode.get("State").asInt());
             sub.setCreateTime(subNode.get("CreateTime").asLong() * 1000);
             sub.setLastModifyTime(subNode.get("LastModifyTime").asLong() * 1000);
             subscriptions.add(sub);

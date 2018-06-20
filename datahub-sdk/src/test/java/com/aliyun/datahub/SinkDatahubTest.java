@@ -3,6 +3,7 @@ package com.aliyun.datahub;
 import com.aliyun.datahub.common.data.FieldType;
 import com.aliyun.datahub.common.data.RecordSchema;
 import com.aliyun.datahub.common.data.RecordType;
+import com.aliyun.datahub.exception.DatahubClientException;
 import com.aliyun.datahub.exception.InvalidParameterException;
 import com.aliyun.datahub.model.*;
 import com.aliyun.datahub.util.DatahubTestUtils;
@@ -34,6 +35,11 @@ public class SinkDatahubTest {
 
     @AfterMethod
     public void TearDown() {
+        try {
+            client.deleteDataConnector(DatahubTestUtils.getProjectName(), fromTopic, ConnectorType.SINK_DATAHUB);
+        } catch (DatahubClientException e) {
+
+        }
         if (fromTopic != null) {
             client.deleteTopic(DatahubTestUtils.getProjectName(), fromTopic);
         }
@@ -43,7 +49,7 @@ public class SinkDatahubTest {
         }
     }
 
-    @Test
+    @Test(enabled = false)
     public void testSinkDatahub() throws InterruptedException {
         RecordSchema schema = DatahubTestUtils.createSchema("bigint a, double b, boolean c, timestamp d, string e");
         fromTopic = DatahubTestUtils.getRandomTopicName();
@@ -97,7 +103,7 @@ public class SinkDatahubTest {
         client.deleteDataConnector(project, fromTopic, ConnectorType.SINK_DATAHUB);
     }
 
-    @Test
+    @Test(enabled = false)
     public void testSinkDatahubBlob() throws InterruptedException {
         fromTopic = DatahubTestUtils.getRandomTopicName();
         client.createTopic(project, fromTopic, 5, 1, RecordType.BLOB, "from topic");
@@ -142,7 +148,7 @@ public class SinkDatahubTest {
         client.deleteDataConnector(project, fromTopic, ConnectorType.SINK_DATAHUB);
     }
 
-    @Test (expectedExceptions = {InvalidParameterException.class}, expectedExceptionsMessageRegExp = ".*schema not match.*")
+    @Test (enabled = false, expectedExceptions = {InvalidParameterException.class}, expectedExceptionsMessageRegExp = ".*schema not match.*")
     public void testSinkDatahubWithMismatchedSchema() {
         RecordSchema fromSchema = DatahubTestUtils.createSchema("bigint a");
         fromTopic = DatahubTestUtils.getRandomTopicName();
@@ -159,7 +165,7 @@ public class SinkDatahubTest {
         client.createDataConnector(project, fromTopic, ConnectorType.SINK_DATAHUB, config);
     }
 
-    @Test (expectedExceptions = {InvalidParameterException.class}, expectedExceptionsMessageRegExp = ".*record type not match.*")
+    @Test (enabled = false, expectedExceptions = {InvalidParameterException.class}, expectedExceptionsMessageRegExp = ".*record type not match.*")
     public void testSinkDatahubWithMismatchedRecordType() {
         RecordSchema schema = DatahubTestUtils.createSchema("bigint a");
         fromTopic = DatahubTestUtils.getRandomTopicName();
@@ -175,7 +181,7 @@ public class SinkDatahubTest {
         client.createDataConnector(project, fromTopic, ConnectorType.SINK_DATAHUB, config);
     }
 
-    @Test (expectedExceptions = {InvalidParameterException.class}, expectedExceptionsMessageRegExp = ".*shard count not match.*")
+    @Test (enabled = false, expectedExceptions = {InvalidParameterException.class}, expectedExceptionsMessageRegExp = ".*shard count not match.*")
     public void testSinkDatahubWithMismatchedShardCount() {
         RecordSchema schema = DatahubTestUtils.createSchema("bigint a");
         fromTopic = DatahubTestUtils.getRandomTopicName();

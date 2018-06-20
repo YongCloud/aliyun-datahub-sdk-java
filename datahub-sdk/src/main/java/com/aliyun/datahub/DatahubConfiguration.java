@@ -20,8 +20,7 @@
 package com.aliyun.datahub;
 
 import com.aliyun.datahub.auth.Account;
-import com.aliyun.datahub.common.transport.DefaultTransport;
-import com.aliyun.datahub.common.transport.JerseyTransport;
+import com.aliyun.datahub.common.transport.ApacheClientTransport;
 import com.aliyun.datahub.model.compress.CompressionFormat;
 import com.aliyun.datahub.rest.RestClient;
 
@@ -139,7 +138,7 @@ public class DatahubConfiguration {
     }
 
     public RestClient newRestClient() {
-        RestClient client = new RestClient(new JerseyTransport(this), compressionFormat);
+        RestClient client = new RestClient(new ApacheClientTransport(this), compressionFormat);
         client.setAccount(account);
         client.setEndpoint(endpoint);
         client.setUserAgent(userAgent);

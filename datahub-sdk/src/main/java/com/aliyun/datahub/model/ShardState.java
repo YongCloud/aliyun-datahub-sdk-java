@@ -4,5 +4,6 @@ public enum ShardState {
     OPENING,
     ACTIVE,
     CLOSED,
-    CLOSING;
+    CLOSING,
+    INACTIVE
 }

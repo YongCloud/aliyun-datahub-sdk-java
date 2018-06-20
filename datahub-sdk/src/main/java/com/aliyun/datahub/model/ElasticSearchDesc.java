@@ -20,6 +20,8 @@ public class ElasticSearchDesc extends ConnectorConfig {
     private String password;
     private List<String> idFields;
     private List<String> typeFields;
+    private Long maxCommitSize;
+    private boolean proxyMode = false;
 
     public ElasticSearchDesc() {
         idFields = new ArrayList<String>();
@@ -74,6 +76,22 @@ public class ElasticSearchDesc extends ConnectorConfig {
         this.typeFields = typeFields;
     }
 
+    public Long getMaxCommitSize() {
+        return maxCommitSize;
+    }
+
+    public void setMaxCommitSize(Long maxCommitSize) {
+        this.maxCommitSize = maxCommitSize;
+    }
+
+    public boolean isProxyMode() {
+        return proxyMode;
+    }
+
+    public void setProxyMode(boolean proxyMode) {
+        this.proxyMode = proxyMode;
+    }
+
     @Override
     public ObjectNode toJsonNode() {
         ObjectMapper mapper = JacksonParser.getObjectMapper();
@@ -92,6 +110,10 @@ public class ElasticSearchDesc extends ConnectorConfig {
             types.add(i);
         }
         esNode.put("TypeFields", types);
+        if (maxCommitSize != null) {
+            esNode.put("MaxCommitSize", String.valueOf(maxCommitSize));
+        }
+        esNode.put("ProxyMode", String.valueOf(proxyMode));
         return esNode;
     }
 
@@ -105,6 +127,14 @@ public class ElasticSearchDesc extends ConnectorConfig {
             config = node.get("Endpoint");
             if (config != null && !config.isNull()) {
                 setEndpoint(config.asText());
+            }
+            config = node.get("MaxCommitSize");
+            if (config != null && !config.isNull()) {
+                setMaxCommitSize(Long.valueOf(config.asText()));
+            }
+            config = node.get("ProxyMode");
+            if (config != null && !config.isNull()) {
+                setProxyMode(Boolean.valueOf(config.asText()));
             }
             config = node.get("IDFields");
             if (config != null && !config.isNull()) {

@@ -13,6 +13,7 @@ public class DatabaseDesc extends ConnectorConfig {
     private String user;
     private String password;
     private String table;
+    private Long maxCommitSize;
     private boolean ignore = true;
 
     public DatabaseDesc() {}
@@ -73,6 +74,14 @@ public class DatabaseDesc extends ConnectorConfig {
         this.ignore = ignore;
     }
 
+    public Long getMaxCommitSize() {
+        return maxCommitSize;
+    }
+
+    public void setMaxCommitSize(Long maxCommitSize) {
+        this.maxCommitSize = maxCommitSize;
+    }
+
     @Override
     public ObjectNode toJsonNode() {
         ObjectMapper mapper = JacksonParser.getObjectMapper();
@@ -84,6 +93,9 @@ public class DatabaseDesc extends ConnectorConfig {
         dbNode.put("User", user);
         dbNode.put("Password", password);
         dbNode.put("Table", table);
+        if (maxCommitSize != null) {
+            dbNode.put("MaxCommitSize", String.valueOf(maxCommitSize));
+        }
         return dbNode;
     }
 
@@ -109,6 +121,10 @@ public class DatabaseDesc extends ConnectorConfig {
             config = node.get("Table");
             if (config != null && !config.isNull()) {
                 setTable(config.asText());
+            }
+            config = node.get("MaxCommitSize");
+            if (config != null && !config.isNull()) {
+                setMaxCommitSize(Long.valueOf(config.asText()));
             }
         }  else {
             throw new DatahubClientException("Invalid response, missing config.");

@@ -5,6 +5,7 @@ import com.aliyun.datahub.common.util.JacksonParser;
 import com.aliyun.datahub.exception.DatahubServiceException;
 import com.aliyun.datahub.model.GetSubscriptionRequest;
 import com.aliyun.datahub.model.GetSubscriptionResult;
+
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 
@@ -32,9 +33,10 @@ public class GetSubscriptionResultJsonDeser implements Deserializer <GetSubscrip
         rs.setSubId(tree.get("SubId").asText());
         rs.setTopicName(tree.get("TopicName").asText());
         rs.setComment(tree.get("Comment").asText());
+        rs.setType(tree.get("Type").asInt());
+        rs.setState(tree.get("State").asInt());
         rs.setCreateTime(tree.get("CreateTime").asLong() * 1000);
         rs.setLastModifyTime(tree.get("LastModifyTime").asLong() * 1000);
-
         return rs;
     }
 

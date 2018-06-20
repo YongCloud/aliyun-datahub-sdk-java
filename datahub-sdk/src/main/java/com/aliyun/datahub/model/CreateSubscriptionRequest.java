@@ -15,9 +15,9 @@ public class CreateSubscriptionRequest {
         if (topic == null) {
             throw new InvalidParameterException("topic name is null");
         }
-
+        
         if (comment == null) {
-            comment = "";
+        	comment = "";
         }
 
         this.projectName = project;

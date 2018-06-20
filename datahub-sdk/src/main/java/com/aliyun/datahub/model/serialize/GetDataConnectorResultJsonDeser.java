@@ -82,6 +82,9 @@ public class GetDataConnectorResultJsonDeser implements Deserializer<GetDataConn
         } else if (rs.getType() == ConnectorType.SINK_FC) {
             config = new FcDesc();
             config.ParseFromJsonNode(node);
+        } else if (rs.getType() == ConnectorType.SINK_OTS) {
+            config = new OtsDesc();
+            config.ParseFromJsonNode(node);
         } else {
             throw new DatahubClientException("Invalid response, missing 'config'");
         }

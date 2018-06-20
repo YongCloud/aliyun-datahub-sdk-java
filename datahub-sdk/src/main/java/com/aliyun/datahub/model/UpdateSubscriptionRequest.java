@@ -4,12 +4,17 @@ import com.aliyun.datahub.exception.InvalidParameterException;
 
 public class UpdateSubscriptionRequest {
     private String projectName;
+    private String topicName;
     private String subId;
     private String comment;
 
-    public UpdateSubscriptionRequest(String project, String subId, String comment) {
+    public UpdateSubscriptionRequest(String project, String topic, String subId, String comment) {
         if (project == null) {
             throw new InvalidParameterException("project name is null");
+        }
+        
+        if (topic == null) {
+            throw new InvalidParameterException("topic name is null");
         }
 
         if (subId == null) {
@@ -21,12 +26,17 @@ public class UpdateSubscriptionRequest {
         }
 
         this.projectName = project;
+        this.topicName = topic;
         this.subId = subId;
         this.comment = comment;
     }
 
     public String getProjectName() {
         return projectName;
+    }
+    
+    public String getTopicName() {
+    	return topicName;
     }
 
     public String getSubId() {

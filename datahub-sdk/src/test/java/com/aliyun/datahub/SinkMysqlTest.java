@@ -82,6 +82,11 @@ public class SinkMysqlTest {
   @AfterMethod
   public void TearDown() {
     try {
+      client.deleteDataConnector(projectName, topicName, connectoType);
+    } catch (DatahubClientException e) {
+
+    }
+    try {
       client.deleteTopic(projectName, topicName);
     } catch (DatahubClientException e) {
 
@@ -121,7 +126,6 @@ public class SinkMysqlTest {
 
   private ResultSet select(Connection conn, String sql) {
     try {
-      // statement����ִ��SQL���
       PreparedStatement statement = conn.prepareStatement(sql);
       return statement.executeQuery();
     } catch (SQLException e) {
@@ -131,7 +135,6 @@ public class SinkMysqlTest {
 
   private void execute(Connection conn, String sql) {
     try {
-      // statement����ִ��SQL���
       System.out.println(sql);
       PreparedStatement statement = conn.prepareStatement(sql);
       statement.execute();
@@ -927,6 +930,61 @@ public class SinkMysqlTest {
     Assert.assertEquals(commit_count, total);
     GetDataConnectorShardStatusResult getDataConnectorShardStatusResult = client.getDataConnectorShardStatus(projectName, topicName, connectoType, "0");
     Assert.assertEquals(getDataConnectorShardStatusResult.getState(), ConnectorShardStatus.CONTEXT_FINISHED);
+    checkDBRecordCount(Long.valueOf(pk2Version.size()));
+    checkDBRecordValue(schema);
+  }
+
+  @Test
+  public void testSinkMysqlConnectorNormalWithCommitSize() {
+    RecordSchema schema = new RecordSchema();
+    schema.addField(new Field("f1", FieldType.STRING));
+    schema.addField(new Field("f2", FieldType.BIGINT));
+    schema.addField(new Field("f3", FieldType.DOUBLE));
+    schema.addField(new Field("f4", FieldType.TIMESTAMP));
+    schema.addField(new Field("f5", FieldType.BOOLEAN));
+    schema.addField(new Field("f6", FieldType.TIMESTAMP, true));
+    schema.addField(new Field("pk", FieldType.STRING));
+    CreateTopic(schema);
+
+    CreateTable(schema, true);
+    List<String> columnFields = new ArrayList<String>();
+    columnFields.add("f1");
+    columnFields.add("f2");
+    columnFields.add("f3");
+    columnFields.add("f4");
+    columnFields.add("f5");
+    columnFields.add("f6");
+    columnFields.add("pk");
+    desc.setMaxCommitSize(100L);
+    client.createDataConnector(projectName, topicName, connectoType, columnFields, desc);
+
+    ListDataConnectorResult listDataConnectorResult = client.listDataConnector(projectName, topicName);
+    List<String> connectors = listDataConnectorResult.getDataConnectors();
+    Assert.assertTrue(connectors.contains(connectoType.toString().toLowerCase()));
+
+    GetDataConnectorResult getDataConnectorResult = client.getDataConnector(projectName, topicName, connectoType);
+    Assert.assertEquals(getDataConnectorResult.getColumnFields(), columnFields);
+    DatabaseDesc dbDesc = (DatabaseDesc)getDataConnectorResult.getConnectorConfig();
+    Assert.assertEquals(dbDesc.getDatabase(), desc.getDatabase());
+    Assert.assertEquals(dbDesc.getHost(), desc.getHost());
+    Assert.assertEquals(dbDesc.getPort(), desc.getPort());
+    Assert.assertEquals(dbDesc.getTable(), desc.getTable());
+
+    putRecords(schema);
+    try {
+      Thread.sleep(sleepTime);
+    } catch (InterruptedException e) {
+
+    }
+    // check db data
+    long total = shardCount*recordCount;
+    long commit_count = 0;
+    getDataConnectorResult = client.getDataConnector(projectName, topicName, connectoType);
+    for (ShardContext sc : getDataConnectorResult.getShardContexts()) {
+      commit_count += sc.getCurSequence();
+    }
+    Assert.assertEquals(commit_count, total);
+
     checkDBRecordCount(Long.valueOf(pk2Version.size()));
     checkDBRecordValue(schema);
   }

@@ -31,7 +31,7 @@ public class AppendFieldTest {
     private int shardCount = 1;
     private int lifeCycle = 3;
     private Long timestamp = System.currentTimeMillis() * 1000;
-    private long shipperWaitTime = 1000*30;
+    private long shipperWaitTime = 1000*60;
     //Odps
     private Odps odps = null;
     private TableTunnel tunnel = null;
@@ -39,8 +39,8 @@ public class AppendFieldTest {
     private String odpsTable = null;
     private String odpsEndpoint = DatahubTestUtils.getOdpsEndpoint();
     private String tunnelEndpoint = DatahubTestUtils.getOdpsTunnelEndpoint();
-    private String accessId = DatahubTestUtils.getSecondSubAccessId();
-    private String accessKey = DatahubTestUtils.getSecondSubAccesskey();
+    private String accessId = DatahubTestUtils.getAccessId();
+    private String accessKey = DatahubTestUtils.getAccessKey();
     private OdpsDesc odpsDesc = null;
 
     AppendFieldTest() {
@@ -52,7 +52,7 @@ public class AppendFieldTest {
         DatahubConfiguration conf = DatahubTestUtils.getConf();
         projectName = DatahubTestUtils.getProjectName();
         client = new DatahubClient(conf);
-        Account account = new AliyunAccount(DatahubTestUtils.getSecondSubAccessId(), DatahubTestUtils.getSecondSubAccesskey());
+        Account account = new AliyunAccount(DatahubTestUtils.getAccessId(), DatahubTestUtils.getAccessKey());
         odps = new Odps(account);
         odps.setDefaultProject(odpsProject);
         odps.setEndpoint(odpsEndpoint);

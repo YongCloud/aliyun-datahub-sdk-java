@@ -5,6 +5,8 @@ public class GetSubscriptionResult {
 	private String subId;
     private String topicName;
     private String comment;
+    private int type;
+    private int state;
     private long createTime;
     private long lastModifyTime;
 
@@ -30,6 +32,22 @@ public class GetSubscriptionResult {
 
     public void setTopicName(String topicName) {
         this.topicName = topicName;
+    }
+    
+    public int getType() {
+    	return type;
+    }
+    
+    public void setType(int type) {
+    	this.type = type;
+    }
+    
+    public int getState() {
+    	return state;
+    }
+    
+    public void setState(int state) {
+    	this.state = state;
     }
 
     public String getComment() {

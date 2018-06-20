@@ -113,7 +113,7 @@ public class OdpsDesc extends ConnectorConfig {
         odpsDesc.put("Project", projectName);
         odpsDesc.put("Table", tableName);
         odpsDesc.put("OdpsEndpoint", odpsEndpoint);
-        if (!tunnelEndpoint.isEmpty()) {
+        if (tunnelEndpoint != null && !tunnelEndpoint.isEmpty()) {
             odpsDesc.put("TunnelEndpoint", tunnelEndpoint);
         }
         odpsDesc.put("AccessId", accessId);

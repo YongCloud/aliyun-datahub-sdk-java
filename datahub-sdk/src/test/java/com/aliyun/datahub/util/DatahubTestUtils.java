@@ -242,10 +242,6 @@ public class DatahubTestUtils {
         return Integer.valueOf(props.getProperty("default.es.port"));
     }
 
-    public static int getESCluster() {
-        return Integer.valueOf(props.getProperty("default.es.cluster"));
-    }
-
     public static String getESUser() {
         return props.getProperty("default.es.user");
     }
@@ -313,4 +309,14 @@ public class DatahubTestUtils {
     public static String getADSTableGroup() {
         return props.getProperty("default.ads.tablegroup");
     }
-}
+
+    public static String getOtsEndpoint() { return props.getProperty("default.ots.endpoint"); }
+
+    public static String getOtsInstance() { return props.getProperty("default.ots.instance"); }
+
+    public static String getOtsTable() { return props.getProperty("default.ots.table"); }
+
+    public static String getOtsAccessId() { return props.getProperty("default.ots.access.id"); }
+
+    public static String getOtsAccessKey() { return props.getProperty("default.ots.access.key"); }
+ }

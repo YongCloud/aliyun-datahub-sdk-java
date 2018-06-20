@@ -142,7 +142,7 @@ public class StsTest {
     }
 
     @Test(expectedExceptions = NoPermissionException.class)
-    public void testSplitShard() {
+    public void testSplitShard() throws InterruptedException {
         AssumeRoleResponse.Credentials credentials = getToken(PUT_RECORD_POLICY);
         AliyunAccount account = new AliyunAccount(credentials.getAccessKeyId(),
                 credentials.getAccessKeySecret(),
@@ -151,6 +151,8 @@ public class StsTest {
 
         client.createProject(projectName, "sts test");
         client.createTopic(projectName, topicName, 1, 1, RecordType.BLOB, "");
+        // sleep for operation limit
+        Thread.sleep(6000);
         client.splitShard(projectName, topicName, "0");
     }
 

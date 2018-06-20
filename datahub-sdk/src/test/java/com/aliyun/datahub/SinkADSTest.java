@@ -87,6 +87,11 @@ public class SinkADSTest {
   @AfterMethod
   public void TearDown() {
     try {
+      client.deleteDataConnector(projectName, topicName, connectoType);
+    } catch (DatahubClientException e) {
+
+    }
+    try {
       client.deleteTopic(projectName, topicName);
     } catch (DatahubClientException e) {
 

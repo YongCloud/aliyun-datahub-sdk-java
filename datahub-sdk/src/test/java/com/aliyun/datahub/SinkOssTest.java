@@ -57,6 +57,11 @@ public class SinkOssTest {
     @AfterMethod
     void teardown() {
         try {
+            client.deleteDataConnector(projectName, topicName, ConnectorType.SINK_OSS);
+        } catch (DatahubServiceException e) {
+
+        }
+        try {
             client.deleteTopic(projectName, topicName);
         } catch (DatahubServiceException e) {
 

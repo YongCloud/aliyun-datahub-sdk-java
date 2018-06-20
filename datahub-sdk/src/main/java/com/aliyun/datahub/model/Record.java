@@ -2,7 +2,6 @@ package com.aliyun.datahub.model;
 
 import com.aliyun.datahub.DatahubConstants;
 import com.aliyun.datahub.common.util.JacksonParser;
-import com.aliyun.datahub.exception.DatahubClientException;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ObjectNode;
@@ -66,9 +65,9 @@ public abstract class Record {
     public void setSequence(long sequence) {
         this.sequence = sequence;
     }
-
-    public Offset getOffset() {
-        return new Offset(sequence + 1, systemTime);
+    
+    public OffsetContext.Offset getOffset() {
+    	return new OffsetContext.Offset(sequence, systemTime);
     }
 
     public Map<String, String> getAttributes() {

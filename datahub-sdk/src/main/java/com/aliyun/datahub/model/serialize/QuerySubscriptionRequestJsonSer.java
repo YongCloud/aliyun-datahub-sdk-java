@@ -10,11 +10,8 @@ public class QuerySubscriptionRequestJsonSer implements Serializer<DefaultReques
     public DefaultRequest serialize(QuerySubscriptionRequest request) throws DatahubClientException {
         DefaultRequest req = new DefaultRequest();
         req.setHttpMethod(HttpMethod.POST);
-        req.setResource("/projects/" + request.getProjectName() + "/subscriptions");
+        req.setResource("/projects/" + request.getProjectName() + "/topics/" + request.getTopicName() + "/subscriptions");
         String body = "{\"Action\":\"list\"";
-        if (request.getTopicName() != null) {
-            body += ",\"TopicName\":\"" + request.getTopicName() + "\"";
-        }
         if (request.getQueryKey() != null) {
             body += ",\"Search\":\"" + request.getQueryKey() + "\"";
         }

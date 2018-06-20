@@ -10,7 +10,7 @@ public class GetSubscriptionRequestJsonSer implements Serializer<DefaultRequest,
     public DefaultRequest serialize(GetSubscriptionRequest request) throws DatahubClientException {
         DefaultRequest req = new DefaultRequest();
         req.setHttpMethod(HttpMethod.GET);
-        req.setResource("/projects/" + request.getProjectName() + "/subscriptions/" + request.getSubId());
+        req.setResource("/projects/" + request.getProjectName() + "/topics/" + request.getTopicName() + "/subscriptions/" + request.getSubId());
         return req;
     }
 

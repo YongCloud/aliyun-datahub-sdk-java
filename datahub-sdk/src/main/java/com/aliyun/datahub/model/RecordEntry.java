@@ -8,7 +8,7 @@ import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.ObjectNode;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
+import java.util.Date;
 import java.util.HashMap;
 
 public class RecordEntry extends Record {
@@ -77,11 +77,11 @@ public class RecordEntry extends Record {
         return fields;
     }
 
-    private Object get(int idx) {
+    public Object get(int idx) {
         return values[idx];
     }
 
-    private Object get(String fieldName) {
+    public Object get(String fieldName) {
         return values[getFieldIndex(fieldName)];
     }
 
@@ -150,6 +150,7 @@ public class RecordEntry extends Record {
      * @param microseconds
      *     the value of the field is microseconds
      */
+    @Deprecated
     public void setTimeStamp(int idx, Long microseconds) {
         if (microseconds != null && (microseconds > Long.MAX_VALUE || microseconds <= Long.MIN_VALUE)) {
             throw new IllegalArgumentException("InvalidData: timestamp out of range.");
@@ -157,10 +158,54 @@ public class RecordEntry extends Record {
         values[idx] = microseconds;
     }
 
+    @Deprecated
     public Long getTimeStamp(int idx) {
         return (Long) get(idx);
     }
 
+    /**
+     * set timestamp filed value by index, value should be microseconds
+     * @param idx
+     *     field index
+     * @param value
+     *     the value of the field
+     */
+    public void setTimeStampInDate(int idx, Date value) {
+        if (value != null) {
+            setTimeStampInUs(idx, value.getTime() * 1000);
+        } else {
+            setTimeStampInUs(idx, null);
+        }
+    }
+
+    public void setTimeStampInMs(int idx, Long milliseconds) {
+        if (milliseconds != null) {
+            setTimeStampInUs(idx, milliseconds * 1000);
+        } else {
+            setTimeStampInUs(idx, null);
+        }
+    }
+
+    public void setTimeStampInUs(int idx, Long microseconds) {
+        if (microseconds != null && (microseconds > Long.MAX_VALUE || microseconds <= Long.MIN_VALUE)) {
+            throw new IllegalArgumentException("InvalidData: timestamp out of range.");
+        }
+        values[idx] = microseconds;
+    }
+
+    public Date getTimeStampAsDate(int idx) {
+        Long t = getTimeStampAsUs(idx);
+        return t == null ? null : new Date(t / 1000);
+    }
+
+    public Long getTimeStampAsMs(int idx) {
+        Long t = getTimeStampAsUs(idx);
+        return t == null ? null : t / 1000;
+    }
+
+    public Long getTimeStampAsUs(int idx) {
+        return (Long) get(idx);
+    }
 
     /**
      * set timestamp filed value by field name, value should be microseconds
@@ -169,12 +214,45 @@ public class RecordEntry extends Record {
      * @param microseconds
      *     the value of the field is microseconds
      */
+    @Deprecated
     public void setTimeStamp(String fieldName, Long microseconds) {
         setTimeStamp(getFieldIndex(fieldName), microseconds);
     }
 
+    @Deprecated
     public Long getTimeStamp(String fieldName) {
         return (Long) get(fieldName);
+    }
+
+    /**
+     * set timestamp filed value by field name, value should be microseconds
+     * @param fieldName
+     *     field name
+     * @param value
+     *     the value of the field
+     */
+    public void setTimeStampInDate(String fieldName, Date value) {
+        setTimeStampInDate(getFieldIndex(fieldName), value);
+    }
+
+    public void setTimeStampInMs(String fieldName, Long milliseconds) {
+        setTimeStampInMs(getFieldIndex(fieldName), milliseconds);
+    }
+
+    public void setTimeStampInUs(String fieldName, Long microseconds) {
+        setTimeStampInUs(getFieldIndex(fieldName), microseconds);
+    }
+
+    public Date getTimeStampAsDate(String fieldName) {
+        return getTimeStampAsDate(getFieldIndex(fieldName));
+    }
+
+    public Long getTimeStampAsMs(String fieldName) {
+        return getTimeStampAsMs(getFieldIndex(fieldName));
+    }
+
+    public Long getTimeStampAsUs(String fieldName) {
+        return getTimeStampAsUs(getFieldIndex(fieldName));
     }
 
     public void setString(int idx, String value) {
