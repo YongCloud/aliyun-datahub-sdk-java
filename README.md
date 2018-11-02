@@ -10,7 +10,7 @@
 
 ### Clone and build
 
-    git clone ...
+    git clone https://github.com/aliyun/aliyun-datahub-sdk-java.git
     cd datahub-sdk-java
     mvn clean install -DskipTests
 
@@ -19,7 +19,7 @@
     <dependency>
         <groupId>com.aliyun.datahub</groupId>
         <artifactId>aliyun-sdk-datahub</artifactId>
-        <version>2.1.1</version>
+        <version>2.9.2-public</version>
     </dependency>
 
 ### Endpoint
